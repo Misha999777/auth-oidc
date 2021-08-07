@@ -1,0 +1,95 @@
+import {UserManager, WebStorageStateStore} from "oidc-client";
+
+const LOGGING_IN = "logging_in";
+const LOGIN_STATE = "login_state";
+const LOGGING_OUT = "logging_out";
+
+export class AuthService {
+
+    constructor(authority, clientId, redirectUri) {
+        this.manager = new UserManager({
+            authority: authority,
+            metadata: {
+                issuer: authority,
+                authorization_endpoint: authority + "/protocol/openid-connect/auth",
+                token_endpoint: authority + "/protocol/openid-connect/token",
+                userinfo_endpoint: authority + "/protocol/openid-connect/userinfo",
+                end_session_endpoint: authority + "/protocol/openid-connect/logout"
+            },
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            post_logout_redirect_uri: redirectUri,
+            response_type: 'code',
+            userStore: new WebStorageStateStore({ store: window.localStorage })
+        });
+        this.session = "oidc.user:" + authority + ":" + clientId;
+        window.addEventListener('DOMContentLoaded', () => this.handleLoad(this.manager));
+    }
+
+    handleLoad(manager) {
+        if (!window.location.href.includes("state") && localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
+            localStorage.removeItem(LOGIN_STATE);
+            window.location.reload()
+        }
+
+        if (localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
+            manager.signinRedirectCallback().then(function(user) {
+                localStorage.removeItem(LOGIN_STATE);
+                window.location.reload()
+            });
+        }
+
+        if (localStorage.getItem(LOGIN_STATE) === LOGGING_OUT) {
+            manager.signoutRedirectCallback().then(() => {
+                this.manager.removeUser().then(function() {
+                    localStorage.removeItem(LOGIN_STATE);
+                    window.location.reload()
+                });
+            });
+        }
+    }
+
+    get isLoggedIn() {
+        return localStorage.getItem(this.session) != null
+    }
+
+    hasRole(role) {
+        return JSON.parse(localStorage.getItem(this.session)).profile.realm_access.roles.includes(role);
+    }
+
+    async getToken() {
+        if (localStorage.getItem(this.session)) {
+            if (JSON.parse(localStorage.getItem(this.session)).expires_at < Date.now() / 1000) {
+                try {
+                    await this.manager.signinSilent();
+                } catch (e) {
+                    if (e.message === "Network Error") {
+                        return null;
+                    }
+                    this.login();
+                }
+            }
+            return JSON.parse(localStorage.getItem(this.session)).access_token;
+        } else {
+            return null;
+        }
+    }
+
+    login() {
+        if(!localStorage.getItem(LOGIN_STATE)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
+            this.manager.signinRedirect().catch((error) => this.handleError(error));
+        }
+    }
+
+    logout() {
+        if(!localStorage.getItem(LOGIN_STATE)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
+            this.manager.signoutRedirect().catch((error) => this.handleError(error));
+        }
+    }
+
+    handleError(error) {
+        console.error("Auth error: ", error);
+    }
+}
