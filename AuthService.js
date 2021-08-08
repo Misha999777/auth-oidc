@@ -27,6 +27,12 @@ export class AuthService {
     }
 
     handleLoad(manager) {
+        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
+            manager.signinRedirect();
+            return;
+        }
+
         if (!window.location.href.includes("state") && localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
             localStorage.removeItem(LOGIN_STATE);
             window.location.reload()
@@ -41,7 +47,7 @@ export class AuthService {
 
         if (localStorage.getItem(LOGIN_STATE) === LOGGING_OUT) {
             manager.signoutRedirectCallback().then(() => {
-                this.manager.removeUser().then(function() {
+                manager.removeUser().then(function() {
                     localStorage.removeItem(LOGIN_STATE);
                     window.location.reload()
                 });
@@ -75,21 +81,10 @@ export class AuthService {
         }
     }
 
-    login() {
-        if(!localStorage.getItem(LOGIN_STATE)) {
-            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
-            this.manager.signinRedirect().catch((error) => this.handleError(error));
-        }
-    }
-
     logout() {
         if(!localStorage.getItem(LOGIN_STATE)) {
             localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
-            this.manager.signoutRedirect().catch((error) => this.handleError(error));
+            this.manager.signoutRedirect();
         }
-    }
-
-    handleError(error) {
-        console.error("Auth error: ", error);
     }
 }
