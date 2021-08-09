@@ -6,7 +6,7 @@ const LOGGING_OUT = "logging_out";
 
 export class AuthService {
 
-    constructor(authority, clientId, redirectUri) {
+    constructor(authority, clientId, redirectUri, autoLogin) {
         this.manager = new UserManager({
             authority: authority,
             metadata: {
@@ -23,13 +23,13 @@ export class AuthService {
             userStore: new WebStorageStateStore({ store: window.localStorage })
         });
         this.session = "oidc.user:" + authority + ":" + clientId;
-        window.addEventListener('DOMContentLoaded', () => this.handleLoad(this.manager));
+        window.addEventListener('DOMContentLoaded', () => this.handleLoad(this.manager, autoLogin));
     }
 
-    handleLoad(manager) {
-        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session)) {
+    handleLoad(manager, autoLogin) {
+        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session) && autoLogin) {
             localStorage.setItem(LOGIN_STATE, LOGGING_IN);
-            manager.signinRedirect();
+            manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
             return;
         }
 
@@ -39,10 +39,10 @@ export class AuthService {
         }
 
         if (localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
-            manager.signinRedirectCallback().then(function(user) {
+            manager.signinRedirectCallback().then(function() {
                 localStorage.removeItem(LOGIN_STATE);
                 window.location.reload()
-            });
+            }).catch((error) => console.log("Auth Error: " + error));
         }
 
         if (localStorage.getItem(LOGIN_STATE) === LOGGING_OUT) {
@@ -51,7 +51,7 @@ export class AuthService {
                     localStorage.removeItem(LOGIN_STATE);
                     window.location.reload()
                 });
-            });
+            }).catch((error) => console.log("Auth Error: " + error));
         }
     }
 
@@ -81,10 +81,17 @@ export class AuthService {
         }
     }
 
+    login() {
+        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
+            this.manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
+        }
+    }
+
     logout() {
         if(!localStorage.getItem(LOGIN_STATE)) {
             localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
-            this.manager.signoutRedirect();
+            this.manager.signoutRedirect().catch((error) => console.log("Auth Error: " + error));
         }
     }
 }
