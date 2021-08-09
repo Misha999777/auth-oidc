@@ -72,6 +72,7 @@ export class AuthService {
                     if (e.message === "Network Error") {
                         return null;
                     }
+                    localStorage.removeItem(this.session);
                     this.login();
                 }
             }
