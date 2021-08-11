@@ -1,6 +1,6 @@
 {
   "name": "tcomad-oidc",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Small JS library to authenticate with OpenID Connect auth service (f.e. Keycloak)",
   "main": "index.js",
   "scripts": {

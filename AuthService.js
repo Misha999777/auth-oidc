@@ -41,7 +41,8 @@ export class AuthService {
         if (localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
             manager.signinRedirectCallback().then(function() {
                 localStorage.removeItem(LOGIN_STATE);
-                window.location.reload()
+                let url = window.location.href;
+                window.location.href = url.split("?")[0];
             }).catch((error) => console.log("Auth Error: " + error));
         }
 
@@ -49,7 +50,8 @@ export class AuthService {
             manager.signoutRedirectCallback().then(() => {
                 manager.removeUser().then(function() {
                     localStorage.removeItem(LOGIN_STATE);
-                    window.location.reload()
+                    let url = window.location.href;
+                    window.location.href = url.split("?")[0];
                 });
             }).catch((error) => console.log("Auth Error: " + error));
         }
