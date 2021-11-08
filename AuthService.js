@@ -78,10 +78,12 @@ export class AuthService {
                     this.login();
                 }
             }
-            return JSON.parse(localStorage.getItem(this.session)).access_token;
-        } else {
-            return null;
+            let session = JSON.parse(localStorage.getItem(this.session));
+            if (session) {
+                return session.access_token;
+            }
         }
+        return null;
     }
 
     login() {
