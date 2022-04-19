@@ -26,8 +26,61 @@ export class AuthService {
         window.addEventListener('DOMContentLoaded', () => this.handleLoad(this.manager, autoLogin));
     }
 
+    isLoggedIn() {
+        let session = localStorage.getItem(this.session);
+        if (session) {
+            return JSON.parse(session).expires_at > Date.now() / 1000
+        }
+        return false;
+    }
+
+    login() {
+        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
+            this.manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
+        }
+    }
+
+    hasRole(role) {
+        if (this.isLoggedIn()) {
+            return JSON.parse(this.session).profile.realm_access.roles.includes(role);
+        } else {
+            return false;
+        }
+    }
+
+    async getToken() {
+        if (localStorage.getItem(this.session)) {
+            await this.tryToRefresh();
+
+            let session = JSON.parse(localStorage.getItem(this.session));
+            if (session) {
+                return session.access_token;
+            }
+        }
+        return null;
+    }
+
+    logout() {
+        if(!localStorage.getItem(LOGIN_STATE)) {
+            localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
+            this.manager.signoutRedirect().catch((error) => console.log("Auth Error: " + error));
+        }
+    }
+
+    async tryToRefresh() {
+        if (JSON.parse(localStorage.getItem(this.session)).expires_at < Date.now() / 1000) {
+            try {
+                await this.manager.signinSilent();
+            } catch (e) {
+                localStorage.removeItem(this.session);
+                this.login();
+            }
+        }
+    }
+
     handleLoad(manager, autoLogin) {
-        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session) && autoLogin) {
+        if(!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && autoLogin) {
             localStorage.setItem(LOGIN_STATE, LOGGING_IN);
             manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
             return;
@@ -54,49 +107,6 @@ export class AuthService {
                     window.location.href = url.split("?")[0];
                 });
             }).catch((error) => console.log("Auth Error: " + error));
-        }
-    }
-
-    isLoggedIn() {
-        return localStorage.getItem(this.session) != null
-    }
-
-    hasRole(role) {
-        return JSON.parse(localStorage.getItem(this.session)).profile.realm_access.roles.includes(role);
-    }
-
-    async getToken() {
-        if (localStorage.getItem(this.session)) {
-            if (JSON.parse(localStorage.getItem(this.session)).expires_at < Date.now() / 1000) {
-                try {
-                    await this.manager.signinSilent();
-                } catch (e) {
-                    if (e.message === "Network Error") {
-                        return null;
-                    }
-                    localStorage.removeItem(this.session);
-                    this.login();
-                }
-            }
-            let session = JSON.parse(localStorage.getItem(this.session));
-            if (session) {
-                return session.access_token;
-            }
-        }
-        return null;
-    }
-
-    login() {
-        if(!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.session)) {
-            localStorage.setItem(LOGIN_STATE, LOGGING_IN);
-            this.manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
-        }
-    }
-
-    logout() {
-        if(!localStorage.getItem(LOGIN_STATE)) {
-            localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
-            this.manager.signoutRedirect().catch((error) => console.log("Auth Error: " + error));
         }
     }
 }
