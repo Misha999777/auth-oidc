@@ -57,7 +57,7 @@ export class AuthService {
         }
     }
 
-    get isLoggedIn() {
+    isLoggedIn() {
         return localStorage.getItem(this.session) != null
     }
 
