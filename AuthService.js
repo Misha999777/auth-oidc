@@ -4,6 +4,7 @@ const LOGGING_IN = "logging_in";
 const LOGIN_STATE = "login_state";
 const LOGGING_OUT = "logging_out";
 
+// noinspection JSUnusedGlobalSymbols
 export class AuthService {
 
     constructor(authority, clientId, redirectUri, autoLogin) {

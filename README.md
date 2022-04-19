@@ -40,7 +40,7 @@ You can check login status to redirect user th their home if they are already lo
 
 <pre>
 componentDidMount() {
-    if (authService.isLoggedIn) {
+    if (authService.isLoggedIn()) {
         this.props.history.push("/bots");
     }
 };
@@ -52,7 +52,7 @@ To check use role you can use
 
 ### 7. Get access token to make requests
 You can get user access token with (token will be automatically refreshed if ti is expired)
-<pre>await authService.getToken()</pre>
+<pre>authService.getToken()</pre>
 
 ### 8. Logout user
 You can logout user from your application and authentication service with

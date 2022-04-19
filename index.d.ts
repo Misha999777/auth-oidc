@@ -1,13 +1,14 @@
 declare module 'tcomad-oidc' {
+
+    // noinspection JSUnusedGlobalSymbols
     export class AuthService {
 
         constructor(authority: string, clientId: string, redirectUri: string, autoLogin: boolean);
 
         isLoggedIn(): boolean;
+        login(): void;
         hasRole(role: string): boolean;
         getToken(): Promise<string>;
-        login(): void;
-
         logout(): void;
     }
 }
