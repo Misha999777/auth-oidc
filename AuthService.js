@@ -7,7 +7,7 @@ const LOGGING_OUT = "logging_out";
 // noinspection JSUnusedGlobalSymbols
 export class AuthService {
 
-    constructor(authority, clientId, redirectUri, autoLogin) {
+    constructor(authority, clientId, autoLogin) {
         this.manager = new UserManager({
             authority: authority,
             metadata: {
@@ -18,8 +18,6 @@ export class AuthService {
                 end_session_endpoint: authority + "/protocol/openid-connect/logout"
             },
             client_id: clientId,
-            redirect_uri: redirectUri,
-            post_logout_redirect_uri: redirectUri,
             response_type: 'code',
             userStore: new WebStorageStateStore({ store: window.localStorage })
         });
@@ -44,7 +42,8 @@ export class AuthService {
 
     hasRole(role) {
         if (this.isLoggedIn()) {
-            return JSON.parse(this.session).profile.realm_access.roles.includes(role);
+            let session = localStorage.getItem(this.session);
+            return JSON.parse(session).profile.realm_access.roles.includes(role);
         } else {
             return false;
         }
@@ -65,7 +64,8 @@ export class AuthService {
     logout() {
         if(!localStorage.getItem(LOGIN_STATE)) {
             localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
-            this.manager.signoutRedirect().catch((error) => console.log("Auth Error: " + error));
+            this.manager.signoutRedirect({post_logout_redirect_uri: window.location.href})
+                .catch((error) => console.log("Auth Error: " + error));
         }
     }
 
@@ -83,7 +83,8 @@ export class AuthService {
     handleLoad(manager, autoLogin) {
         if(!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && autoLogin) {
             localStorage.setItem(LOGIN_STATE, LOGGING_IN);
-            manager.signinRedirect().catch((error) => console.log("Auth Error: " + error));
+            manager.signinRedirect({redirect_uri: window.location.href})
+                .catch((error) => console.log("Auth Error: " + error));
             return;
         }
 
@@ -95,8 +96,11 @@ export class AuthService {
         if (localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
             manager.signinRedirectCallback().then(function() {
                 localStorage.removeItem(LOGIN_STATE);
-                let url = window.location.href;
-                window.location.href = url.split("?")[0];
+                let url = new URL(location.href);
+                url.searchParams.delete('state');
+                url.searchParams.delete('session_state');
+                url.searchParams.delete('code');
+                window.location.href = url.toString();
             }).catch((error) => console.log("Auth Error: " + error));
         }
 
