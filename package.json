@@ -2,9 +2,16 @@
   "name": "tcomad-oidc",
   "version": "2.0.4",
   "type": "module",
-  "description": "Small JS library to authenticate with OpenID Connect auth service (f.e. Keycloak)",
   "exports": "./index.js",
   "author": "Mykhailo Hroshevyi",
+  "description": "Small JS library to authenticate with OpenID Connect auth service (f.e. Keycloak)",
+  "dependencies": {
+    "@capacitor/app": "^1.1.1",
+    "@capacitor/browser": "^1.0.7",
+    "@capacitor/core": "^3.5.0",
+    "oidc-client": "^1.11.5"
+  },
+  "repository": "https://github.com/Misha999777/tcomad-oidc",
   "keywords": [
     "oidc",
     "oauth",
@@ -21,12 +28,5 @@
     "capacitor",
     "native"
   ],
-  "repository": "https://github.com/Misha999777/tcomad-oidc",
-  "license": "ISC",
-  "dependencies": {
-    "@capacitor/app": "^1.1.1",
-    "@capacitor/browser": "^1.0.7",
-    "@capacitor/core": "^3.5.0",
-    "oidc-client": "^1.11.5"
-  }
+  "license": "ISC"
 }
