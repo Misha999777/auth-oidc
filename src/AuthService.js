@@ -18,11 +18,11 @@ export class AuthService {
         const session = "oidc.user:" + authority + ":" + clientId;
 
         if (Capacitor.isNativePlatform()) {
-            this.flow = new CapacitorFlow(manager, session, capacitorAppBundle);
+            this.flow = new CapacitorFlow(manager, session, autoLogin, capacitorAppBundle);
         } else if (isElectron()) {
-            this.flow = new ElectronFlow(manager, session, electronRedirectUrl);
+            this.flow = new ElectronFlow(manager, session, autoLogin, electronRedirectUrl);
         } else {
-            this.flow = new BrowserFlow(manager, session);
+            this.flow = new BrowserFlow(manager, session, autoLogin);
         }
     }
 
