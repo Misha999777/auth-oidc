@@ -11,8 +11,8 @@ export class AuthService {
     constructor(authority,
                 clientId,
                 autoLogin = false,
-                electronRedirectUrl = null,
-                capacitorAppBundle = null) {
+                electronRedirectUrl = "electron",
+                capacitorAppBundle = "capacitor://callback") {
 
         const manager = createManger(authority, clientId);
         const session = "oidc.user:" + authority + ":" + clientId;
