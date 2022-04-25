@@ -1,1 +1,1 @@
-export * from "./AuthService.js";
+export * from "./src/AuthService.js";
