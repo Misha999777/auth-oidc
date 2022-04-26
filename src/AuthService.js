@@ -1,8 +1,6 @@
-import {Capacitor} from "@capacitor/core";
 import {BrowserFlow} from "./flows/BrowserFlow.js";
-import {CapacitorFlow} from "./flows/CapacitorFlow.js";
-import {isElectron} from "./utils/EnvUtils.js";
-import {ElectronFlow} from "./flows/ElectronFlow.js";
+import {isCapacitorNative, isElectron} from "./utils/EnvUtils.js";
+import {NativeFlow} from "./flows/NativeFlow.js";
 import {createManger} from "./utils/ManagerUtils.js";
 
 // noinspection JSUnusedGlobalSymbols
@@ -11,16 +9,16 @@ export class AuthService {
     constructor(authority,
                 clientId,
                 autoLogin = false,
-                electronRedirectUrl = "electron",
-                capacitorAppBundle = "capacitor://callback") {
+                electronRedirectUrl = "http://localhost/",
+                capacitorRedirectUrl = "http://localhost/") {
 
         const manager = createManger(authority, clientId);
         const session = "oidc.user:" + authority + ":" + clientId;
 
-        if (Capacitor.isNativePlatform()) {
-            this.flow = new CapacitorFlow(manager, session, autoLogin, capacitorAppBundle);
+        if (isCapacitorNative(window)) {
+            this.flow = new NativeFlow(manager, session, autoLogin, capacitorRedirectUrl);
         } else if (isElectron()) {
-            this.flow = new ElectronFlow(manager, session, autoLogin, electronRedirectUrl);
+            this.flow = new NativeFlow(manager, session, autoLogin, electronRedirectUrl);
         } else {
             this.flow = new BrowserFlow(manager, session, autoLogin);
         }

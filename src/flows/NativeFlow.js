@@ -1,7 +1,7 @@
 import {LOGGING_IN, LOGGING_OUT, LOGIN_STATE} from "../enums/States.js";
 import {BrowserFlow} from "./BrowserFlow.js";
 
-export class ElectronFlow extends BrowserFlow {
+export class NativeFlow extends BrowserFlow {
 
     constructor(userManager, sessionName, autoLogin, redirectUrl) {
         super(userManager, sessionName, autoLogin)

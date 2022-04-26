@@ -16,15 +16,6 @@
 
 <pre>npm install tcomad-oidc --save</pre>
 
-**WARNING: You will have to install thr next Capacitor plugins
-to use this library inside a Capacitor app:**
-
-<pre>
-npm install @capacitor/app --save
-npm install @capacitor/browser --save
-npm install @capacitor/core --save
-</pre>
-
 ### 2. Import AuthService
 
 <pre>import {AuthService} from "tcomad-oidc";</pre>
@@ -38,12 +29,12 @@ Constructor arguments:
 2. Client ID: ID of the application registered within authentication service
 3. (OPTIONAL) Determines whether authentication should start automatically when page loaded
     * Defaults to true
-4. (OPTIONAL) URL which must be used to return to Electron app
+4. (OPTIONAL) URL which must be used to return user to Electron app
     * Will only be used if Electron context detected
-    * Defaults to "electron"
-5. (OPTIONAL) URL which must be used to return to Capacitor app
+    * Defaults to "http://localhost/"
+5. (OPTIONAL) URL which must be used to return user to Capacitor app
     * Will only be used if Capacitor context detected
-    * Defaults to "capacitor://callback"
+    * Defaults to http://localhost/"
 
 
 ### 4. Start login

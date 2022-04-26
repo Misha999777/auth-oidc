@@ -40,8 +40,10 @@ export class BaseFlow {
         try {
             await this.userManager.signinSilent();
         } catch (e) {
-            localStorage.removeItem(this.sessionName);
-            window.location.reload()
+            if (e.message !== "Network Error") {
+                localStorage.removeItem(this.sessionName);
+                window.location.reload()
+            }
         }
     }
 
