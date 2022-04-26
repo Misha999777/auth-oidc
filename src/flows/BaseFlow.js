@@ -1,3 +1,5 @@
+import {extractRoles} from "../utils/TokenUtils.js";
+
 export class BaseFlow {
 
     constructor(userManager, sessionName) {
@@ -16,7 +18,8 @@ export class BaseFlow {
     hasRole(role) {
         if (this.isLoggedIn()) {
             let session = localStorage.getItem(this.sessionName);
-            return JSON.parse(session).profile.realm_access.roles.includes(role);
+            let userRoles = extractRoles(session);
+            return userRoles.includes(role);
         } else {
             return false;
         }
