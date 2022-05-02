@@ -27,9 +27,13 @@ export class BrowserFlow extends BaseFlow {
         this.userManager.signoutRedirect(signOutOptions).catch((error) => console.log("Auth Error: " + error));
     }
 
-    handleWindowLoaded() {
-        if (!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.sessionName) && this.autoLogin) {
-            this.login();
+    async handleWindowLoaded() {
+        if (!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && this.autoLogin) {
+            if (localStorage.getItem(this.sessionName)) {
+                await this.tryToRefresh();
+            } else {
+                this.login();
+            }
             return;
         }
 
