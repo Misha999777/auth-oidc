@@ -29,11 +29,7 @@ export class BrowserFlow extends BaseFlow {
 
     async handleWindowLoaded() {
         if (!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && this.autoLogin) {
-            if (localStorage.getItem(this.sessionName)) {
-                await this.tryToRefresh();
-            } else {
-                this.login();
-            }
+            this.login();
             return;
         }
 

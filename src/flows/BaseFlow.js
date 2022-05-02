@@ -8,11 +8,7 @@ export class BaseFlow {
     }
 
     isLoggedIn() {
-        let session = localStorage.getItem(this.sessionName);
-        if (session) {
-            return JSON.parse(session).expires_at > Date.now() / 1000
-        }
-        return false;
+        return !!localStorage.getItem(this.sessionName);
     }
 
     hasRole(role) {
