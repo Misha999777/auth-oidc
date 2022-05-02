@@ -28,7 +28,7 @@ export class BrowserFlow extends BaseFlow {
     }
 
     handleWindowLoaded() {
-        if (!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && this.autoLogin) {
+        if (!localStorage.getItem(LOGIN_STATE) && !localStorage.getItem(this.sessionName) && this.autoLogin) {
             this.login();
             return;
         }
