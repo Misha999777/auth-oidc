@@ -15,6 +15,10 @@ export class BaseFlow {
         if (this.isLoggedIn()) {
             let session = localStorage.getItem(this.sessionName);
             let userRoles = extractRoles(session);
+            if (!userRoles) {
+                return false;
+            }
+
             return userRoles.includes(role);
         } else {
             return false;

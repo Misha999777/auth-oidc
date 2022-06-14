@@ -4,5 +4,5 @@ export function extractRoles(session) {
 
     let decodedPayload = atob(tokenPayload);
 
-    return JSON.parse(decodedPayload).realm_access.roles;
+    return JSON.parse(decodedPayload).realm_access?.roles;
 }
