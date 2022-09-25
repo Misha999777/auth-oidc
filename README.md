@@ -1,10 +1,10 @@
-# Authenticate users with OpenID authentication service (fe. Keycloak) in browser, Electron, or Capacitor app
+# Authenticate users with OpenID authentication service (f.e. Keycloak) in browser, Electron, or Capacitor app
 
 ## Main features:
-1. Login using redirect to auth service
+1. TypeScript support
 2. Authenticating inside an Electron app
 3. Authenticating inside a Capacitor app
-4. TypeScript support
+4. Login using redirect to auth service
 5. Saving user info
 6. Checking user role
 7. Supplying access token for requests to the back-end
@@ -42,19 +42,12 @@ Login will be started automatically if it was configured to do so, if no, you ca
 it by
 <pre>authService.login()</pre>
 
-**WARNING: Do not place login() into componentDidMount(), ngOnInit(), etc... as it will break authentication process.
+**WARNING: Do not place login() into componentDidMount(), ngOnInit(), etc... as it may break authentication process.
 Use autoLogin option if you want users to be redirected to the auth server as soon as they open your application**
 
 ### 5. Check login status
-You can check login status to redirect user th their home if they are already logged in
-
-<pre>
-componentDidMount() {
-    if (authService.isLoggedIn()) {
-        this.props.history.push("/bots");
-    }
-};
-</pre>
+You can check login status with
+<pre>authService.isLoggedIn()</pre>
 
 ### 6. Check if current user has required role
 To check use role you can use
