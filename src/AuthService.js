@@ -36,6 +36,10 @@ export class AuthService {
         return this.flow.hasRole(role);
     }
 
+    hasAnyRole() {
+        return this.flow.hasAnyRole();
+    }
+
     async getToken() {
         return await this.flow.getToken();
     }

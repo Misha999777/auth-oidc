@@ -37,6 +37,17 @@ export class BaseFlow {
         }
     }
 
+    hasAnyRole() {
+        if (this.isLoggedIn()) {
+            let session = localStorage.getItem(this.sessionName);
+            let userRoles = extractRoles(session);
+
+            return !!userRoles;
+        } else {
+            return false;
+        }
+    }
+
     async getToken() {
         if (localStorage.getItem(this.sessionName)) {
             if (JSON.parse(localStorage.getItem(this.sessionName)).expires_at < Date.now() / 1000) {
