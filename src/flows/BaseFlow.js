@@ -64,7 +64,7 @@ export class BaseFlow {
         try {
             await this.oidcService.signinSilent();
         } catch (e) {
-            if (e.message !== "Network Error") {
+            if (e.message !== "Failed to fetch") {
                 this.oidcService.forgetSession();
 
                 window.location.reload()
