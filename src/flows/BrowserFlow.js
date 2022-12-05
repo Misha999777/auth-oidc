@@ -1,26 +1,16 @@
-import {LOGGING_IN, LOGGING_OUT, LOGIN_STATE} from "../enums/States.js";
 import {BaseFlow} from "./BaseFlow.js";
 
 export class BrowserFlow extends BaseFlow {
 
-    constructor(userManager, sessionName, autoLogin) {
-        super(userManager, sessionName, autoLogin)
-
-        this.userManager = userManager;
-        this.sessionName = sessionName;
+    constructor(oidcService, autoLogin) {
+        super(oidcService, autoLogin)
     }
 
     login() {
-        const signInOptions = {redirect_uri: window.location.href};
-
-        localStorage.setItem(LOGIN_STATE, LOGGING_IN);
-        this.userManager.signinRedirect(signInOptions).catch((error) => console.log("Auth Error: " + error));
+        this.oidcService.signinRedirect(window.location.href);
     }
 
     logout() {
-        const signOutOptions = {post_logout_redirect_uri: window.location.href};
-
-        localStorage.setItem(LOGIN_STATE, LOGGING_OUT);
-        this.userManager.signoutRedirect(signOutOptions).catch((error) => console.log("Auth Error: " + error));
+        this.oidcService.signoutRedirect(window.location.href);
     }
 }

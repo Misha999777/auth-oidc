@@ -1,11 +1,9 @@
 import {extractRoles} from "../utils/TokenUtils.js";
-import {LOGGING_IN, LOGGING_OUT, LOGIN_STATE} from "../enums/States.js";
 
 export class BaseFlow {
 
-    constructor(userManager, sessionName, autoLogin) {
-        this.userManager = userManager;
-        this.sessionName = sessionName;
+    constructor(oidcService, autoLogin) {
+        this.oidcService = oidcService;
         this.autoLogin = autoLogin;
 
         window.addEventListener('DOMContentLoaded', () => this.handleWindowLoaded());
@@ -20,12 +18,12 @@ export class BaseFlow {
     }
 
     isLoggedIn() {
-        return !!localStorage.getItem(this.sessionName);
+        return !!this.oidcService.getSession();
     }
 
     hasRole(role) {
         if (this.isLoggedIn()) {
-            let session = localStorage.getItem(this.sessionName);
+            let session = this.oidcService.getSession();
             let userRoles = extractRoles(session);
             if (!userRoles) {
                 return false;
@@ -39,7 +37,7 @@ export class BaseFlow {
 
     hasAnyRole() {
         if (this.isLoggedIn()) {
-            let session = localStorage.getItem(this.sessionName);
+            let session = this.oidcService.getSession();
             let userRoles = extractRoles(session);
 
             return !!userRoles;
@@ -49,12 +47,12 @@ export class BaseFlow {
     }
 
     async getToken() {
-        if (localStorage.getItem(this.sessionName)) {
-            if (JSON.parse(localStorage.getItem(this.sessionName)).expires_at < Date.now() / 1000) {
+        if (this.isLoggedIn()) {
+            if (this.oidcService.getSession().expires_at < Date.now() - 10000) {
                 await this.tryToRefresh();
             }
 
-            let session = JSON.parse(localStorage.getItem(this.sessionName));
+            let session = this.oidcService.getSession();
             if (session) {
                 return session.access_token;
             }
@@ -64,44 +62,36 @@ export class BaseFlow {
 
     async tryToRefresh() {
         try {
-            await this.userManager.signinSilent();
+            await this.oidcService.signinSilent();
         } catch (e) {
             if (e.message !== "Network Error") {
-                localStorage.removeItem(this.sessionName);
+                this.oidcService.forgetSession();
+
                 window.location.reload()
             }
         }
     }
 
     async handleWindowLoaded() {
-        if (!localStorage.getItem(LOGIN_STATE) && !this.isLoggedIn() && this.autoLogin) {
+        if (!this.oidcService.isLoggingIn() && !this.isLoggedIn() && this.autoLogin) {
             this.login();
             return;
         }
 
-        if (!window.location.href.includes("state") && localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
-            localStorage.removeItem(LOGIN_STATE);
+        if (!window.location.href.includes("state") && this.oidcService.isLoggingIn()) {
+            
             window.location.href = window.location.href.split("?")[0];
         }
 
-        if (localStorage.getItem(LOGIN_STATE) === LOGGING_IN) {
-            this.userManager.signinRedirectCallback().then(function () {
-                localStorage.removeItem(LOGIN_STATE);
-                let url = new URL(window.location.href);
-                url.searchParams.delete('state');
-                url.searchParams.delete('session_state');
-                url.searchParams.delete('code');
-                window.location.href = url.toString();
-            }).catch((error) => console.log("Auth Error: " + error));
-        }
+        if (this.oidcService.isLoggingIn()) {
+            await this.oidcService.signinRedirectCallback();
 
-        if (localStorage.getItem(LOGIN_STATE) === LOGGING_OUT) {
-            this.userManager.signoutRedirectCallback().then(() => {
-                this.userManager.removeUser().then(function () {
-                    localStorage.removeItem(LOGIN_STATE);
-                    window.location.href = window.location.href.split("?")[0];
-                });
-            }).catch((error) => console.log("Auth Error: " + error));
+            this.oidcService.cancelLogin();
+
+            let url = new URL(window.location.href);
+            url.searchParams.delete('code');
+            url.searchParams.delete('session_state');
+            window.location.href = url.toString();
         }
     }
 }

@@ -2,14 +2,13 @@
 
 ## Main features:
 1. TypeScript support
-2. Authenticating inside an Electron app
-3. Authenticating inside a Capacitor app
-4. Login using redirect to auth service
-5. Saving user info
-6. Checking user role
-7. Supplying access token for requests to the back-end
-8. Automatic refreshing of the access token with refresh token when it expires
-9. Logging out user from the application and from the auth service
+2. ESModule support
+3. Logs user in using redirect to the auth service
+4. Works in browser, Electron and Capacitor
+5. Checking user role
+6. Supplying access token for requests to the back-end
+7. Automatic refreshing of the access token with refresh token when it expires
+8. Logging out user from the application and from the auth service
 
 ## How to use
 ### 1. Install library using npm
@@ -25,7 +24,7 @@
 <pre>new AuthService(Config.AUTHORITY, Config.CLIENT_ID);</pre>
 
 Constructor arguments:
-1. Authority: URL to the authentication service (http://[server-address]/auth/realms/[realm-name])
+1. Authority: URL to the authentication service (http://[host]/auth/realms/[realm-name])
 2. Client ID: ID of the application registered within authentication service
 3. (OPTIONAL) Determines whether authentication should start automatically when page loaded
     * Defaults to true
@@ -49,18 +48,22 @@ Use autoLogin option if you want users to be redirected to the auth server as so
 You can check login status with
 <pre>authService.isLoggedIn()</pre>
 
-### 6. Check if current user has required role
-To check use role you can use
+### 6. Check if current user has any role
+To check if current user has any role you can use
+<pre>authService.hasAnyRole()</pre>
+
+### 7. Check if current user has required role
+To check if current user has required role you can use
 <pre>authService.hasRole("ROLE_NAME")</pre>
 
-### 7. Get access token to make requests
+### 8. Get access token to make requests
 You can get user access token with (token will be automatically refreshed if ti is expired)
 <pre>authService.getToken()</pre>
 
-### 8. Force to refresh the token
+### 9. Force to refresh the token
 You can force lib to refresh the token silently with:
 <pre>authService.tryToRefresh()</pre>
 
-### 9. Logout user
+### 10. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>

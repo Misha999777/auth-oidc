@@ -1,7 +1,7 @@
 import {BrowserFlow} from "./flows/BrowserFlow.js";
 import {isCapacitorNative, isElectron} from "./utils/EnvUtils.js";
 import {NativeFlow} from "./flows/NativeFlow.js";
-import {createManger} from "./utils/ManagerUtils.js";
+import {OIDCService} from "./service/OIDCService.js";
 
 // noinspection JSUnusedGlobalSymbols
 export class AuthService {
@@ -12,15 +12,14 @@ export class AuthService {
                 electronRedirectUrl = "http://localhost/",
                 capacitorRedirectUrl = "http://localhost/") {
 
-        const manager = createManger(authority, clientId);
-        const session = "oidc.user:" + authority + ":" + clientId;
+        const oidcService = new OIDCService(authority, clientId);
 
         if (isCapacitorNative(window)) {
-            this.flow = new NativeFlow(manager, session, autoLogin, capacitorRedirectUrl);
+            this.flow = new NativeFlow(oidcService, autoLogin, capacitorRedirectUrl);
         } else if (isElectron()) {
-            this.flow = new NativeFlow(manager, session, autoLogin, electronRedirectUrl);
+            this.flow = new NativeFlow(oidcService, autoLogin, electronRedirectUrl);
         } else {
-            this.flow = new BrowserFlow(manager, session, autoLogin);
+            this.flow = new BrowserFlow(oidcService, autoLogin);
         }
     }
 

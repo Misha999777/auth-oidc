@@ -6,5 +6,6 @@ export function isElectron() {
 
 export function isCapacitorNative(window) {
     const capacitor = window['Capacitor'];
+
     return !!(capacitor && capacitor.isNativePlatform);
 }

@@ -21,8 +21,6 @@ declare module 'tcomad-oidc' {
 
         tryToRefresh(): Promise<void>;
 
-        tryToRefresh(): Promise<void>;
-
         logout(): void;
     }
 }

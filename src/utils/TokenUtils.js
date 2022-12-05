@@ -1,5 +1,5 @@
 export function extractRoles(session) {
-    let accessToken = JSON.parse(session).access_token;
+    let accessToken = session.access_token;
     let tokenPayload = accessToken.split(".")[1];
 
     let decodedPayload = atob(toBase64(tokenPayload));
