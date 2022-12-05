@@ -31,12 +31,8 @@ export class AuthService {
         return this.flow.isLoggedIn();
     }
 
-    hasRole(role) {
-        return this.flow.hasRole(role);
-    }
-
-    hasAnyRole() {
-        return this.flow.hasAnyRole();
+    getRoles() {
+        return this.flow.getRoles();
     }
 
     async getToken() {

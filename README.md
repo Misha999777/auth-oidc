@@ -48,22 +48,18 @@ Use autoLogin option if you want users to be redirected to the auth server as so
 You can check login status with
 <pre>authService.isLoggedIn()</pre>
 
-### 6. Check if current user has any role
-To check if current user has any role you can use
-<pre>authService.hasAnyRole()</pre>
+### 6. Get user's roles
+To get user's roles you can use
+<pre>authService.getRoles()</pre>
 
-### 7. Check if current user has required role
-To check if current user has required role you can use
-<pre>authService.hasRole("ROLE_NAME")</pre>
-
-### 8. Get access token to make requests
+### 7. Get access token to make requests
 You can get user access token with (token will be automatically refreshed if ti is expired)
 <pre>authService.getToken()</pre>
 
-### 9. Force to refresh the token
+### 8. Force to refresh the token
 You can force lib to refresh the token silently with:
 <pre>authService.tryToRefresh()</pre>
 
-### 10. Logout user
+### 9. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>

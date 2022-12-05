@@ -21,28 +21,12 @@ export class BaseFlow {
         return !!this.oidcService.getSession();
     }
 
-    hasRole(role) {
+    getRoles() {
         if (this.isLoggedIn()) {
             let session = this.oidcService.getSession();
-            let userRoles = extractRoles(session);
-            if (!userRoles) {
-                return false;
-            }
-
-            return userRoles.includes(role);
+            return extractRoles(session);
         } else {
-            return false;
-        }
-    }
-
-    hasAnyRole() {
-        if (this.isLoggedIn()) {
-            let session = this.oidcService.getSession();
-            let userRoles = extractRoles(session);
-
-            return !!userRoles;
-        } else {
-            return false;
+            return [];
         }
     }
 

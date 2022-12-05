@@ -13,9 +13,7 @@ declare module 'tcomad-oidc' {
 
         isLoggedIn(): boolean;
 
-        hasRole(role: string): boolean;
-
-        hasAnyRole(): boolean;
+        getRoles(): Array<string>;
 
         getToken(): Promise<string>;
 
