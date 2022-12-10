@@ -1,4 +1,4 @@
-import {extractRoles} from "../utils/TokenUtils.js";
+import {extractRoles, extractUsername} from "../utils/TokenUtils.js";
 
 export class BaseFlow {
 
@@ -27,6 +27,15 @@ export class BaseFlow {
             return extractRoles(session);
         } else {
             return [];
+        }
+    }
+
+    getUsername() {
+        if (this.isLoggedIn()) {
+            let session = this.oidcService.getSession();
+            return extractUsername(session);
+        } else {
+            return null;
         }
     }
 

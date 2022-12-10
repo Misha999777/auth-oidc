@@ -1,10 +1,19 @@
 export function extractRoles(session) {
-    let accessToken = session.access_token;
-    let tokenPayload = accessToken.split(".")[1];
-
-    let decodedPayload = atob(toBase64(tokenPayload));
+    let decodedPayload = decodePayload(session.access_token)
 
     return JSON.parse(decodedPayload).realm_access?.roles;
+}
+
+export function extractUsername(session) {
+    let decodedPayload = decodePayload(session.id_token);
+
+    return JSON.parse(decodedPayload).preferred_username;
+}
+
+function decodePayload(token) {
+    let tokenPayload = token.split(".")[1];
+
+    return atob(toBase64(tokenPayload));
 }
 
 function toBase64(base64url) {

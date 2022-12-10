@@ -7,8 +7,10 @@ export class OIDCService {
     CLIENT_ID_PARAMETER = "client_id";
     REDIRECT_URI_PARAMETER = "redirect_uri";
     RESPONSE_TYPE_PARAMETER = "response_type";
+    SCOPE_URI_PARAMETER = "scope";
 
     CODE = "code";
+    OPEN_ID = "openid";
     AUTH = "active_auth";
     ACTIVE_REDIRECT_URI = "active_auth_redirect_uri";
 
@@ -27,7 +29,8 @@ export class OIDCService {
         let parameters = [
             this.constructParam(this.CLIENT_ID_PARAMETER, this.clientId), 
             this.constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)), 
-            this.constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE)
+            this.constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
+            this.constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID)
         ].join("&");
 
         let href = [loginUri, "?", parameters].join("");

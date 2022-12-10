@@ -35,6 +35,10 @@ export class AuthService {
         return this.flow.getRoles();
     }
 
+    getUsername() {
+        return this.flow.getUsername();
+    }
+
     async getToken() {
         return await this.flow.getToken();
     }

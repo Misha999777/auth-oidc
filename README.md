@@ -52,14 +52,18 @@ You can check login status with
 To get user's roles you can use
 <pre>authService.getRoles()</pre>
 
-### 7. Get access token to make requests
+### 7. Get user's username
+To get user's username you can use
+<pre>authService.getUsername()</pre>
+
+### 8. Get access token to make requests
 You can get user access token with (token will be automatically refreshed if ti is expired)
 <pre>authService.getToken()</pre>
 
-### 8. Force to refresh the token
+### 9. Force to refresh the token
 You can force lib to refresh the token silently with:
 <pre>authService.tryToRefresh()</pre>
 
-### 9. Logout user
+### 10. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>
