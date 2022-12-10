@@ -6,9 +6,10 @@
 3. Logs user in using redirect to the auth service
 4. Works in browser, Electron and Capacitor
 5. Checking user role
-6. Supplying access token for requests to the back-end
-7. Automatic refreshing of the access token with refresh token when it expires
-8. Logging out user from the application and from the auth service
+6. Getting username
+7. Supplying access token for requests to the back-end
+8. Automatic refreshing of the access token with refresh token when it expires
+9. Logging out user from the application and from the auth service
 
 ## How to use
 ### 1. Install library using npm
@@ -57,7 +58,7 @@ To get user's username you can use
 <pre>authService.getUsername()</pre>
 
 ### 8. Get access token to make requests
-You can get user access token with (token will be automatically refreshed if ti is expired)
+You can get user access token with (a refresh attempt will be made if token is expiring)
 <pre>authService.getToken()</pre>
 
 ### 9. Force to refresh the token
