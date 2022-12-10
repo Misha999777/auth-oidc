@@ -1,4 +1,4 @@
-# Authenticate users with OpenID authentication service (f.e. Keycloak) in browser, Electron, or Capacitor app
+# Authenticate users with OpenID Connect authentication service (f.e. Keycloak) in browser, Electron, or Capacitor app
 
 ## Main features:
 1. TypeScript support
