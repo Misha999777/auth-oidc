@@ -3,8 +3,8 @@
 ## Main features:
 1. TypeScript support
 2. ESModule support
-3. Logs user in using redirect to the auth service
-4. Works in browser, Electron and Capacitor
+3. Logging user in using redirect to the auth service
+4. Working in browser, Electron and Capacitor applications
 5. Checking user role
 6. Getting username
 7. Supplying access token for requests to the back-end
