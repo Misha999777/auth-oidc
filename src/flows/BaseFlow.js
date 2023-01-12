@@ -6,7 +6,12 @@ export class BaseFlow {
         this.oidcService = oidcService;
         this.autoLogin = autoLogin;
 
-        window.addEventListener('DOMContentLoaded', () => this.handleWindowLoaded());
+        if (document.readyState !== 'loading') {
+            this.handleWindowLoaded()
+                .catch(error => console.log(error));
+        } else {
+            window.addEventListener('DOMContentLoaded', () => this.handleWindowLoaded());
+        }
     }
 
     login() {

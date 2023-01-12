@@ -1,6 +1,6 @@
 {
   "name": "tcomad-oidc",
-  "version": "3.0.2",
+  "version": "3.0.5",
   "type": "module",
   "exports": "./index.js",
   "author": "Mykhailo Hroshevyi",
