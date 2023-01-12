@@ -76,9 +76,14 @@ export class BaseFlow {
             return;
         }
 
+        if (window.location.href.includes("error") && this.oidcService.isLoggingIn()) {
+            console.log("Auth error");
+            return;
+        }
+
         if (!window.location.href.includes("state") && this.oidcService.isLoggingIn()) {
-            
             window.location.href = window.location.href.split("?")[0];
+            return;
         }
 
         if (this.oidcService.isLoggingIn()) {
