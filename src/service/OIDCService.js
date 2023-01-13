@@ -23,7 +23,7 @@ export class OIDCService {
         this.clientId = clientId;
     }
 
-    signinRedirect(redirectUri) {
+    signInRedirect(redirectUri) {
         let loginUri = [this.authority, this.AUTHORIZATION_ENDPOINT].join("");
 
         let parameters = [
@@ -40,7 +40,7 @@ export class OIDCService {
         window.location.href = href;
     }
 
-    signoutRedirect(redirectUri) {
+    signOutRedirect(redirectUri) {
         let logoutUri = [this.authority, this.END_SESSION_ENDPOINT].join("");
 
         let parameters = this.constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri));
@@ -52,14 +52,9 @@ export class OIDCService {
         window.location.href = href;
     }
 
-    async signinRedirectCallback() {
+    async signInRedirectCallback() {
         let url = new URL(window.location.href);
         let code = url.searchParams.get(this.CODE);
-
-        if (!code) {
-            localStorage.removeItem(this.ACTIVE_REDIRECT_URI);
-            return;
-        }
 
         let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(""),
         {
@@ -73,12 +68,12 @@ export class OIDCService {
         });
 
         let json = await response.json();
-        json.expires_at = Date.now() + json.expires_in * 1000;
+        json.expires_at = Date.now() + json['expires_in'] * 1000;
 
         localStorage.setItem(this.AUTH, JSON.stringify(json))
     }
 
-    async signinSilent() {
+    async signInSilent() {
         let refreshToken = JSON.parse(localStorage.getItem(this.AUTH)).refresh_token;
 
         let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(''),
@@ -96,7 +91,7 @@ export class OIDCService {
         }
 
         let json = await response.json();
-        json.expires_at = Date.now() + json.expires_in * 1000;
+        json.expires_at = Date.now() + json["expires_in"] * 1000;
         
         localStorage.setItem(this.AUTH, JSON.stringify(json))
     }

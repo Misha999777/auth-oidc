@@ -1,13 +1,13 @@
 export function extractRoles(session) {
-    let decodedPayload = decodePayload(session.access_token)
+    let decodedPayload = decodePayload(session['access_token'])
 
-    return JSON.parse(decodedPayload).realm_access?.roles;
+    return JSON.parse(decodedPayload)['realm_access']['roles'];
 }
 
 export function extractUsername(session) {
-    let decodedPayload = decodePayload(session.id_token);
+    let decodedPayload = decodePayload(session['id_token']);
 
-    return JSON.parse(decodedPayload).preferred_username;
+    return JSON.parse(decodedPayload)['preferred_username'];
 }
 
 function decodePayload(token) {

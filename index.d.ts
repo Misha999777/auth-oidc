@@ -6,6 +6,7 @@ declare module 'tcomad-oidc' {
         constructor(authority: string,
                     clientId: string,
                     autoLogin?: boolean,
+                    errorHandler?: (error: string) => void,
                     electronRedirectUrl?: string,
                     capacitorAppBundle?: string);
 

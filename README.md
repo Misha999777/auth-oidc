@@ -25,14 +25,16 @@
 <pre>new AuthService(Config.AUTHORITY, Config.CLIENT_ID);</pre>
 
 Constructor arguments:
-1. Authority: URL to the authentication service (http://[host]/auth/realms/[realm-name])
-2. Client ID: ID of the application registered within authentication service
-3. (OPTIONAL) Determines whether authentication should start automatically when page loaded
-    * Defaults to true
-4. (OPTIONAL) URL which must be used to return user to Electron app
+1. authority: URL to the authentication service (http://[host]/auth/realms/[realm-name])
+2. clientId: ID of the application registered within authentication service
+3. (OPTIONAL) errorHandler: callback function that will be called in case of auth errors
+    * (error) => console.log(error)
+4. (OPTIONAL) autoLogin: Determines whether authentication should start automatically when page loaded
+   * Defaults to false
+5. (OPTIONAL) URL which must be used to return user to Electron app
     * Will only be used if Electron context detected
     * Defaults to "http://localhost/"
-5. (OPTIONAL) URL which must be used to return user to Capacitor app
+6. (OPTIONAL) URL which must be used to return user to Capacitor app
     * Will only be used if Capacitor context detected
     * Defaults to http://localhost/"
 
@@ -41,9 +43,6 @@ Constructor arguments:
 Login will be started automatically if it was configured to do so, if no, you can start
 it by
 <pre>authService.login()</pre>
-
-**WARNING: Do not place login() into componentDidMount(), ngOnInit(), etc... as it may break authentication process.
-Use autoLogin option if you want users to be redirected to the auth server as soon as they open your application**
 
 ### 5. Check login status
 You can check login status with
