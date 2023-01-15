@@ -68,6 +68,11 @@ export class OIDCService {
         });
 
         let json = await response.json();
+
+        if (!json['expires_in']) {
+            throw "Can't obtain token";
+        }
+
         json.expires_at = Date.now() + json['expires_in'] * 1000;
 
         localStorage.setItem(this.AUTH, JSON.stringify(json))

@@ -18,13 +18,12 @@ export class BrowserService {
             this.oidcService.cancelLogin();
 
             let url = new URL(window.location.href);
-            let description = url.searchParams.get('error_description');
 
             url.searchParams.delete('error');
             url.searchParams.delete('error_description');
             window.history.replaceState({}, "", url.toString());
 
-            this.errorHandler("Auth failed: " + description ?? "no matching state found");
+            this.errorHandler("Auth failed: no matching state found");
             return;
         }
 
