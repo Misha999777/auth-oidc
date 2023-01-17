@@ -80,7 +80,7 @@ export class BrowserService {
             throw "No active auth or auth is in progress";
         }
 
-        if (this.oidcService.getSession().expires_at < Date.now() - 10000) {
+        if (this.oidcService.getSession().expires_at < Date.now() + 10000) {
             await this.tryToRefresh();
         }
 
