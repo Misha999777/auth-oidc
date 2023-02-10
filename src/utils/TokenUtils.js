@@ -1,7 +1,8 @@
 export function extractRoles(session) {
     let decodedPayload = decodePayload(session['access_token'])
+    let realmAccess = JSON.parse(decodedPayload)['realm_access'];
 
-    return JSON.parse(decodedPayload)['realm_access']['roles'];
+    return !!realmAccess ? realmAccess['roles'] : [];
 }
 
 export function extractUsername(session) {
