@@ -1,4 +1,5 @@
 # Authenticate users with OpenID Connect authentication service (f.e. Keycloak) in browser, Electron, or Capacitor app
+[![License](https://img.shields.io/:license-MIT-green.svg)](https://github.com/Misha999777/tcomad-oidc/blob/master/LICENSE)
 
 ## Main features:
 1. TypeScript support
@@ -67,3 +68,8 @@ You can force lib to refresh the token silently with:
 ### 10. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>
+
+## Copyright
+
+Released under the MIT License.
+See the [LICENSE](https://github.com/Misha999777/tcomad-oidc/blob/master/LICENSE) file.
