@@ -6,6 +6,8 @@ export class OIDCService {
 
     CLIENT_ID_PARAMETER = "client_id";
     REDIRECT_URI_PARAMETER = "redirect_uri";
+    POST_LOGOUT_REDIRECT_URI_PARAMETER = "post_logout_redirect_uri";
+    ID_TOKEN_HINT_URI_PARAMETER = "id_token_hint";
     RESPONSE_TYPE_PARAMETER = "response_type";
     SCOPE_URI_PARAMETER = "scope";
 
@@ -42,8 +44,12 @@ export class OIDCService {
 
     signOutRedirect(redirectUri) {
         let logoutUri = [this.authority, this.END_SESSION_ENDPOINT].join("");
+        let id_token = JSON.parse(localStorage.getItem(this.AUTH)).id_token;
 
-        let parameters = this.constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri));
+        let parameters = [
+            this.constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
+            this.constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, id_token)
+        ].join("&");
 
         let href = [logoutUri, "?", parameters].join("");
 
