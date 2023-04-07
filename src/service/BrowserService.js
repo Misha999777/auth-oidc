@@ -1,4 +1,4 @@
-import {extractClaim, extractRoles} from "../utils/TokenUtils.js";
+import {extractRoles} from "../utils/TokenUtils.js";
 
 // noinspection JSUnusedGlobalSymbols
 export class BrowserService {
@@ -66,13 +66,13 @@ export class BrowserService {
         return extractRoles(session);
     }
 
-    getClaim(claim) {
+    getUserInfo(claim) {
         if (!this.isLoggedIn()) {
             throw "No active auth or auth is in progress";
         }
 
         let session = this.oidcService.getSession();
-        return extractClaim(session, claim);
+        return session.userInfo[claim];
     }
 
     async getToken() {

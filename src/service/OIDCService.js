@@ -2,6 +2,7 @@ export class OIDCService {
 
     AUTHORIZATION_ENDPOINT = "/protocol/openid-connect/auth";
     TOKEN_ENDPOINT =  "/protocol/openid-connect/token";
+    USER_INFO_ENDPOINT =  "/protocol/openid-connect/userinfo";
     END_SESSION_ENDPOINT = "/protocol/openid-connect/logout";
 
     CLIENT_ID_PARAMETER = "client_id";
@@ -82,6 +83,8 @@ export class OIDCService {
         json.expires_at = Date.now() + json['expires_in'] * 1000;
 
         localStorage.setItem(this.AUTH, JSON.stringify(json))
+
+        await this.getUserInfo();
     }
 
     async signInSilent() {
@@ -105,6 +108,26 @@ export class OIDCService {
         json.expires_at = Date.now() + json["expires_in"] * 1000;
         
         localStorage.setItem(this.AUTH, JSON.stringify(json))
+
+        await this.getUserInfo();
+    }
+
+    async getUserInfo() {
+        let auth = JSON.parse(localStorage.getItem(this.AUTH));
+
+        let response = await fetch([this.authority, this.USER_INFO_ENDPOINT].join(''),
+            {
+                method: "GET",
+                headers: [["Authorization", "Bearer " + auth.access_token]]
+            });
+
+        if (!response.ok) {
+            throw new Error("Cant get user info");
+        }
+
+        auth.userInfo = await response.json();
+
+        localStorage.setItem(this.AUTH, JSON.stringify(auth))
     }
 
     isLoggingIn() {

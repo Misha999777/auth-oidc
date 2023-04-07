@@ -5,12 +5,6 @@ export function extractRoles(session) {
     return !!realmAccess ? realmAccess['roles'] : [];
 }
 
-export function extractClaim(session, claim) {
-    let decodedPayload = decodePayload(session['id_token']);
-
-    return JSON.parse(decodedPayload)[claim];
-}
-
 function decodePayload(token) {
     let tokenPayload = token.split(".")[1];
 

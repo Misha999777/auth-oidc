@@ -16,7 +16,7 @@ declare module 'tcomad-oidc' {
 
         getRoles(): Array<string>;
 
-        getClaim(claim: string): string;
+        getUserInfo(claim: string): string;
 
         getToken(): Promise<string>;
 
