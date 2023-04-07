@@ -5,10 +5,10 @@ export function extractRoles(session) {
     return !!realmAccess ? realmAccess['roles'] : [];
 }
 
-export function extractUsername(session) {
+export function extractClaim(session, claim) {
     let decodedPayload = decodePayload(session['id_token']);
 
-    return JSON.parse(decodedPayload)['preferred_username'];
+    return JSON.parse(decodedPayload)[claim];
 }
 
 function decodePayload(token) {

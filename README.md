@@ -7,7 +7,7 @@
 3. Logging user in using redirect to the auth service
 4. Working in browser, Electron and Capacitor applications
 5. Checking user role
-6. Getting username
+6. Getting ID token claims
 7. Supplying access token for requests to the back-end
 8. Automatic refreshing of the access token with refresh token when it expires
 9. Logging out user from the application and from the auth service
@@ -53,9 +53,9 @@ You can check login status with
 To get user's roles you can use
 <pre>authService.getRoles()</pre>
 
-### 7. Get user's username
-To get user's username you can use
-<pre>authService.getUsername()</pre>
+### 7. Get ID token claims
+To get ID token claims you can use
+<pre>authService.getClaims("name")</pre>
 
 ### 8. Get access token to make requests
 You can get user access token with (a refresh attempt will be made if token is expiring)
