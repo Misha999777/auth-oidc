@@ -88,13 +88,13 @@ export class OIDCService {
     }
 
     async signInSilent() {
-        let refreshToken = this.getSession().refresh_token;
+        let session = this.getSession();
 
         let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(''),
         {
             method: "POST",
             body: new URLSearchParams({
-                "refresh_token": refreshToken,
+                "refresh_token": session.refresh_token,
                 "grant_type": "refresh_token",
                 "client_id": this.clientId
             })
@@ -106,6 +106,7 @@ export class OIDCService {
 
         let json = await response.json();
         json.expires_at = Date.now() + json["expires_in"] * 1000;
+        json.userInfo = session.userInfo;
         
         localStorage.setItem(this.AUTH, JSON.stringify(json))
 
