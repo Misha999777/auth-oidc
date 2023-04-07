@@ -54,7 +54,7 @@ export class BrowserService {
     }
 
     isLoggedIn() {
-        return !!this.oidcService.getSession();
+        return !!this.oidcService.getSession()?.userInfo;
     }
 
     getRoles() {

@@ -45,7 +45,7 @@ export class OIDCService {
 
     signOutRedirect(redirectUri) {
         let logoutUri = [this.authority, this.END_SESSION_ENDPOINT].join("");
-        let id_token = JSON.parse(localStorage.getItem(this.AUTH)).id_token;
+        let id_token = this.getSession().id_token;
 
         let parameters = [
             this.constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
@@ -88,7 +88,7 @@ export class OIDCService {
     }
 
     async signInSilent() {
-        let refreshToken = JSON.parse(localStorage.getItem(this.AUTH)).refresh_token;
+        let refreshToken = this.getSession().refresh_token;
 
         let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(''),
         {
@@ -113,7 +113,7 @@ export class OIDCService {
     }
 
     async getUserInfo() {
-        let auth = JSON.parse(localStorage.getItem(this.AUTH));
+        let auth = this.getSession();
 
         let response = await fetch([this.authority, this.USER_INFO_ENDPOINT].join(''),
             {
