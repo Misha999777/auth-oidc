@@ -28,11 +28,14 @@ export class BrowserService {
         }
 
         if (this.oidcService.isLoggingIn()) {
-            let url = new URL(window.location.href);
+            const url = new URL(window.location.href);
+
+            const code = url.searchParams.get("code");
+
             url.searchParams.delete('code');
             url.searchParams.delete('session_state');
 
-            this.oidcService.signInRedirectCallback()
+            this.oidcService.signInRedirectCallback(code)
                 .then(() => {
                     this.oidcService.cancelLogin();
                     window.location.href = url.toString();

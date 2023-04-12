@@ -22,11 +22,11 @@ export class OIDCService {
         this.clientId = clientId;
         this.configurationService = new ConfigurationService(authority);
 
-        setInterval(this.watchExpiration, 5000);
+        setInterval(this.watchExpiration.bind(this), 5000);
     }
 
     watchExpiration() {
-        if (!!this.getSession()?.userInfo) {
+        if (!this.getSession()?.userInfo) {
             return;
         }
 
@@ -82,15 +82,12 @@ export class OIDCService {
         window.location.href = href;
     }
 
-    async signInRedirectCallback() {
+    async signInRedirectCallback(code) {
         const endpoint = await this.configurationService.getTokenEndpoint();
 
         if (!endpoint) {
             throw new Error("Can't obtain endpoint");
         }
-
-        let url = new URL(window.location.href);
-        let code = url.searchParams.get(this.CODE);
 
         let response = await fetch(endpoint,
         {
