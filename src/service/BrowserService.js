@@ -75,19 +75,12 @@ export class BrowserService {
         return session.userInfo[claim];
     }
 
-    async getToken() {
+    getToken() {
         if (!this.isLoggedIn()) {
             throw "No active auth or auth is in progress";
         }
 
-        if (this.oidcService.getSession().expires_at < Date.now() + 10000) {
-            await this.tryToRefresh();
-        }
-
-        let session = this.oidcService.getSession();
-        if (session) {
-            return session['access_token'];
-        }
+        return this.oidcService.getSession()['access_token'];
     }
 
     async tryToRefresh() {
@@ -95,14 +88,6 @@ export class BrowserService {
             throw "No active auth or auth is in progress";
         }
 
-        try {
-            await this.oidcService.signInSilent();
-        } catch (e) {
-            if (e.message !== "Failed to fetch") {
-                this.oidcService.forgetSession();
-
-                window.location.reload()
-            }
-        }
+        return this.oidcService.signInSilent();
     }
 }

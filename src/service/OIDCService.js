@@ -24,6 +24,23 @@ export class OIDCService {
 
         this.authority = authority;
         this.clientId = clientId;
+
+        setInterval(this.watchExpiration, 5000);
+    }
+
+    watchExpiration() {
+        if (!!this.getSession()?.userInfo) {
+            return;
+        }
+
+        if (this.getSession().expires_at < Date.now() + 30000) {
+            this.signInSilent().catch(e => {
+                if (e.message !== "Failed to fetch") {
+                    this.forgetSession();
+                    window.location.reload()
+                }
+            });
+        }
     }
 
     signInRedirect(redirectUri) {

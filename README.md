@@ -58,11 +58,11 @@ To get user info claim you can use
 <pre>authService.getUserInfo("name")</pre>
 
 ### 8. Get access token to make requests
-You can get user access token with (a refresh attempt will be made if token is expiring)
+You can get user access token with
 <pre>authService.getToken()</pre>
 
-### 9. Force to refresh the token
-You can force lib to refresh the token silently with:
+### 9. Force refresh
+You can force lib to refresh tokens and user info with:
 <pre>authService.tryToRefresh()</pre>
 
 ### 10. Logout user

@@ -18,7 +18,7 @@ declare module 'tcomad-oidc' {
 
         getUserInfo(claim: string): string;
 
-        getToken(): Promise<string>;
+        getToken(): string;
 
         tryToRefresh(): Promise<void>;
 
