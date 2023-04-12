@@ -6,11 +6,10 @@
 2. ESModule support
 3. Logging user in using redirect to the auth service
 4. Working in browser, Electron and Capacitor applications
-5. Checking user role
-6. Getting user info claims
-7. Supplying access token for requests to the back-end
-8. Automatic refreshing of the access token with refresh token when it expires
-9. Logging out user from the application and from the auth service
+5. Getting user info claims
+6. Supplying access token for requests to the back-end
+7. Automatic refreshing of the access token with refresh token when it expires
+8. Logging out user from the application and from the auth service
 
 ## How to use
 ### 1. Install library using npm
@@ -49,23 +48,19 @@ it by
 You can check login status with
 <pre>authService.isLoggedIn()</pre>
 
-### 6. Get user's roles
-To get user's roles you can use
-<pre>authService.getRoles()</pre>
-
-### 7. Get user info claims
+### 6. Get user info claims
 To get user info claim you can use
 <pre>authService.getUserInfo("name")</pre>
 
-### 8. Get access token to make requests
+### 7. Get access token to make requests
 You can get user access token with
 <pre>authService.getToken()</pre>
 
-### 9. Force refresh
+### 8. Force refresh
 You can force lib to refresh tokens and user info with:
 <pre>authService.tryToRefresh()</pre>
 
-### 10. Logout user
+### 9. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>
 
