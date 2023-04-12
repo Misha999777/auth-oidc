@@ -1,6 +1,5 @@
 declare module 'tcomad-oidc' {
 
-    // noinspection JSUnusedGlobalSymbols
     export class AuthService {
         constructor(config: Config);
 

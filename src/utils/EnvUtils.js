@@ -1,11 +1,11 @@
-export function isElectron() {
-    return typeof navigator === 'object'
-        && typeof navigator.userAgent === 'string'
-        && navigator.userAgent.indexOf('Electron') >= 0;
+export function isElectron () {
+  return typeof navigator === 'object' &&
+        typeof navigator.userAgent === 'string' &&
+        navigator.userAgent.indexOf('Electron') >= 0
 }
 
-export function isCapacitorNative(window) {
-    const capacitor = window['Capacitor'];
+export function isCapacitorNative (window) {
+  const capacitor = window.Capacitor
 
-    return !!(capacitor && capacitor['isNativePlatform']);
+  return !!(capacitor && capacitor.isNativePlatform)
 }
