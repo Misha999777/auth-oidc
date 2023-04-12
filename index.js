@@ -1,25 +1,22 @@
 import {BrowserService} from "./src/service/BrowserService.js";
 import {OIDCService} from "./src/service/OIDCService.js";
 import {isCapacitorNative, isElectron} from "./src/utils/EnvUtils.js";
+import {populateDefaults} from "./src/utils/ConfigUtil.js";
 
 // noinspection JSUnusedGlobalSymbols
 export class AuthService extends BrowserService {
 
-    constructor(authority,
-                clientId,
-                autoLogin = false,
-                errorHandler = (error) => console.log(error),
-                electronRedirectUrl = "http://localhost/",
-                capacitorRedirectUrl = "http://localhost/") {
+    constructor(userConfig) {
+        const config = populateDefaults(userConfig);
 
-        const oidcService = new OIDCService(authority, clientId);
+        const oidcService = new OIDCService(config.authority, config.clientId);
 
         if (isCapacitorNative(window)) {
-            super(oidcService, autoLogin, errorHandler, capacitorRedirectUrl);
+            super(oidcService, config.autoLogin, config.errorHandler, config.capacitorRedirectUrl);
         } else if (isElectron()) {
-            super(oidcService, autoLogin, errorHandler, electronRedirectUrl);
+            super(oidcService, config.autoLogin, config.errorHandler, config.electronRedirectUrl);
         } else {
-            super(oidcService, autoLogin, errorHandler);
+            super(oidcService, config.autoLogin, config.errorHandler);
         }
     }
 }

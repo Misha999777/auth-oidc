@@ -22,9 +22,9 @@
 
 ### 3. Initialize AuthService
 
-<pre>new AuthService(Config.AUTHORITY, Config.CLIENT_ID);</pre>
+<pre>new AuthService(config);</pre>
 
-Constructor arguments:
+Config object fields:
 1. authority: URL to the authentication service (http://[host]/auth/realms/[realm-name])
 2. clientId: ID of the application registered within authentication service
 3. (OPTIONAL) errorHandler: callback function that will be called in case of auth errors
