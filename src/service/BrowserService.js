@@ -46,11 +46,13 @@ export class BrowserService {
     }
 
     login() {
-        this.oidcService.signInRedirect(this.redirectUrl ?? window.location.href);
+        this.oidcService.signInRedirect(this.redirectUrl ?? window.location.href)
+            .catch(() => this.errorHandler("Auth failed: can't perform login redirect"));
     }
 
     logout() {
-        this.oidcService.signOutRedirect(this.redirectUrl ?? window.location.href);
+        this.oidcService.signOutRedirect(this.redirectUrl ?? window.location.href)
+            .catch(() => this.errorHandler("Auth failed: can't perform logout redirect"));
     }
 
     isLoggedIn() {

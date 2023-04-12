@@ -1,9 +1,6 @@
-export class OIDCService {
+import {ConfigurationService} from "./ConfigurationService.js";
 
-    AUTHORIZATION_ENDPOINT = "/protocol/openid-connect/auth";
-    TOKEN_ENDPOINT =  "/protocol/openid-connect/token";
-    USER_INFO_ENDPOINT =  "/protocol/openid-connect/userinfo";
-    END_SESSION_ENDPOINT = "/protocol/openid-connect/logout";
+export class OIDCService {
 
     CLIENT_ID_PARAMETER = "client_id";
     REDIRECT_URI_PARAMETER = "redirect_uri";
@@ -22,8 +19,8 @@ export class OIDCService {
             throw new Error("Wrong configuration");
         }
 
-        this.authority = authority;
         this.clientId = clientId;
+        this.configurationService = new ConfigurationService(authority);
 
         setInterval(this.watchExpiration, 5000);
     }
@@ -43,8 +40,12 @@ export class OIDCService {
         }
     }
 
-    signInRedirect(redirectUri) {
-        let loginUri = [this.authority, this.AUTHORIZATION_ENDPOINT].join("");
+    async signInRedirect(redirectUri) {
+        const endpoint = await this.configurationService.getAuthEndpoint();
+
+        if (!endpoint) {
+            throw new Error("Can't obtain endpoint");
+        }
 
         let parameters = [
             this.constructParam(this.CLIENT_ID_PARAMETER, this.clientId), 
@@ -53,23 +54,28 @@ export class OIDCService {
             this.constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID)
         ].join("&");
 
-        let href = [loginUri, "?", parameters].join("");
+        let href = [endpoint, "?", parameters].join("");
 
         localStorage.setItem(this.ACTIVE_REDIRECT_URI, redirectUri);
 
         window.location.href = href;
     }
 
-    signOutRedirect(redirectUri) {
-        let logoutUri = [this.authority, this.END_SESSION_ENDPOINT].join("");
-        let id_token = this.getSession().id_token;
+    async signOutRedirect(redirectUri) {
+        const endpoint = await this.configurationService.getLogoutEndpoint();
+
+        if (!endpoint) {
+            throw new Error("Can't obtain endpoint");
+        }
+
+        let id_token = this.getSession()["id_token"];
 
         let parameters = [
             this.constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
             this.constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, id_token)
         ].join("&");
 
-        let href = [logoutUri, "?", parameters].join("");
+        let href = [endpoint, "?", parameters].join("");
 
         localStorage.removeItem(this.AUTH);
 
@@ -77,10 +83,16 @@ export class OIDCService {
     }
 
     async signInRedirectCallback() {
+        const endpoint = await this.configurationService.getTokenEndpoint();
+
+        if (!endpoint) {
+            throw new Error("Can't obtain endpoint");
+        }
+
         let url = new URL(window.location.href);
         let code = url.searchParams.get(this.CODE);
 
-        let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(""),
+        let response = await fetch(endpoint,
         {
             method: "POST",
             body: new URLSearchParams({
@@ -105,9 +117,15 @@ export class OIDCService {
     }
 
     async signInSilent() {
+        const endpoint = await this.configurationService.getTokenEndpoint();
+
+        if (!endpoint) {
+            throw new Error("Can't obtain endpoint");
+        }
+
         let session = this.getSession();
 
-        let response = await fetch([this.authority, this.TOKEN_ENDPOINT].join(''),
+        let response = await fetch(endpoint,
         {
             method: "POST",
             body: new URLSearchParams({
@@ -131,12 +149,18 @@ export class OIDCService {
     }
 
     async getUserInfo() {
+        const endpoint = await this.configurationService.getUserInfoEndpoint();
+
+        if (!endpoint) {
+            throw new Error("Can't obtain endpoint");
+        }
+
         let auth = this.getSession();
 
-        let response = await fetch([this.authority, this.USER_INFO_ENDPOINT].join(''),
+        let response = await fetch(endpoint,
             {
                 method: "GET",
-                headers: [["Authorization", "Bearer " + auth.access_token]]
+                headers: [["Authorization", "Bearer " + auth["access_token"]]]
             });
 
         if (!response.ok) {
