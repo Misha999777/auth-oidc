@@ -72,10 +72,6 @@ export class BrowserService {
       throw new Error('No active auth or auth is in progress')
     }
 
-    if (this.oidcService.getSession().expires_at < Date.now()) {
-      throw new Error('Token has expired')
-    }
-
     return this.oidcService.getSession().access_token
   }
 
