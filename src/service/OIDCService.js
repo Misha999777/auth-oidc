@@ -21,6 +21,7 @@ export class OIDCService {
     this.clientId = clientId
     this.configurationService = new ConfigurationService(authority)
 
+    this.watchExpiration();
     setInterval(this.watchExpiration.bind(this), 5000)
   }
 
