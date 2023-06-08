@@ -17,6 +17,6 @@ declare module 'tcomad-oidc' {
         autoLogin?: boolean;
         errorHandler?: (error: string) => void;
         electronRedirectUrl?: string;
-        capacitorAppBundle?: string;
+        capacitorRedirectUrl?: string;
     }
 }
