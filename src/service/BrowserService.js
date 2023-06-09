@@ -19,7 +19,7 @@ export class BrowserService {
       url.searchParams.delete('error_description')
       window.history.replaceState({}, '', url.toString())
 
-      this.errorHandler('Auth failed: no matching state found')
+      this.login()
       return
     }
 
