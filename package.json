@@ -1,6 +1,6 @@
 {
   "name": "tcomad-oidc",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "type": "module",
   "exports": "./index.js",
   "author": "Mykhailo Hroshevyi",
@@ -10,23 +10,21 @@
     "oidc",
     "oauth",
     "authentication",
-    "auth",
     "login",
-    "token",
     "keycloak",
-    "react",
     "typescript",
+    "react",
     "angular",
     "browser",
     "electron",
     "capacitor"
   ],
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint . --ext js --max-warnings 0"
+  },
   "devDependencies": {
     "eslint": "^8.38.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-promise": "^6.1.1"
+    "eslint-config-standard": "^17.0.0"
   }
 }

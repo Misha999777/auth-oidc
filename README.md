@@ -4,12 +4,13 @@
 ## Main features:
 1. TypeScript support
 2. ESModule support
-3. Logging user in using redirect to the auth service
+3. Working with React, Angular and other popular front-end libraries
 4. Working in browser, Electron and Capacitor applications
-5. Getting user info claims
-6. Supplying access token for requests to the back-end
-7. Automatic refreshing of the access token with refresh token when it expires
-8. Logging out user from the application and from the auth service
+5. Logging user in using redirect to the auth service
+7. Getting user info claims
+8. Supplying access token for requests to the back-end
+9. Automatic refreshing of the access token with refresh token when it expires
+10. Logging user out from the application and from the auth service
 
 ## How to use
 ### 1. Install library using npm
@@ -25,16 +26,16 @@
 <pre>new AuthService(config);</pre>
 
 Config object fields:
-1. authority: URL to the authentication service (http://[host]/auth/realms/[realm-name])
-2. clientId: ID of the application registered within authentication service
-3. (OPTIONAL) errorHandler: callback function that will be called in case of auth errors
-    * (error) => console.log(error)
-4. (OPTIONAL) autoLogin: Determines whether authentication should start automatically when page loaded
-   * Defaults to false
-5. (OPTIONAL) URL which must be used to return user to Electron app
+1. **authority**: URL to the authentication service (f.e. http://[host]/realms/[realm-name])
+2. **clientId**: ID of the application registered within authentication service
+3. (OPTIONAL) **errorHandler**: callback function that will be called in case of auth errors
+    * Defaults to (error) => console.log(error)
+4. (OPTIONAL) **autoLogin**: Determines whether authentication should start automatically when page loaded
+    * Defaults to false
+5. (OPTIONAL) **electronRedirectUrl**: URL which must be used to return user to Electron app
     * Will only be used if Electron context detected
     * Defaults to "http://localhost/"
-6. (OPTIONAL) URL which must be used to return user to Capacitor app
+6. (OPTIONAL) **capacitorRedirectUrl**: URL which must be used to return user to Capacitor app
     * Will only be used if Capacitor context detected
     * Defaults to http://localhost/"
 
