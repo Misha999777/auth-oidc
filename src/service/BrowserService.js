@@ -1,5 +1,6 @@
 export class BrowserService {
-  constructor (oidcService, autoLogin, errorHandler, redirectUrl) {
+
+  constructor(oidcService, autoLogin, errorHandler, redirectUrl) {
     this.oidcService = oidcService
     this.autoLogin = autoLogin
     this.errorHandler = errorHandler
@@ -39,26 +40,26 @@ export class BrowserService {
         .catch(() => {
           this.oidcService.cancelLogin()
           window.history.replaceState({}, '', url.toString())
-          this.errorHandler("Auth failed: can't obtain token")
+          this.errorHandler('Auth failed: cant obtain token')
         })
     }
   }
 
-  login () {
+  login() {
     this.oidcService.signInRedirect(this.redirectUrl ?? window.location.href)
-      .catch(() => this.errorHandler("Auth failed: can't perform login redirect"))
+      .catch(() => this.errorHandler('Auth failed: cant perform login redirect'))
   }
 
-  logout () {
+  logout() {
     this.oidcService.signOutRedirect(this.redirectUrl ?? window.location.href)
-      .catch(() => this.errorHandler("Auth failed: can't perform logout redirect"))
+      .catch(() => this.errorHandler('Auth failed: cant perform logout redirect'))
   }
 
-  isLoggedIn () {
+  isLoggedIn() {
     return !!this.oidcService.getSession()?.userInfo
   }
 
-  getUserInfo (claim) {
+  getUserInfo(claim) {
     if (!this.isLoggedIn()) {
       throw new Error('No active auth or auth is in progress')
     }
@@ -67,7 +68,7 @@ export class BrowserService {
     return session.userInfo[claim]
   }
 
-  getToken () {
+  getToken() {
     if (!this.isLoggedIn()) {
       throw new Error('No active auth or auth is in progress')
     }
@@ -75,7 +76,7 @@ export class BrowserService {
     return this.oidcService.getSession().access_token
   }
 
-  async tryToRefresh () {
+  async tryToRefresh() {
     if (!this.isLoggedIn()) {
       throw new Error('No active auth or auth is in progress')
     }

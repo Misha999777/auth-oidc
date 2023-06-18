@@ -1,6 +1,7 @@
 import { ConfigurationService } from './ConfigurationService.js'
 
 export class OIDCService {
+
   CLIENT_ID_PARAMETER = 'client_id'
   REDIRECT_URI_PARAMETER = 'redirect_uri'
   POST_LOGOUT_REDIRECT_URI_PARAMETER = 'post_logout_redirect_uri'
@@ -13,7 +14,7 @@ export class OIDCService {
   AUTH = 'active_auth'
   ACTIVE_REDIRECT_URI = 'active_auth_redirect_uri'
 
-  constructor (authority, clientId) {
+  constructor(authority, clientId) {
     if (!authority || !clientId) {
       throw new Error('Wrong configuration')
     }
@@ -21,37 +22,23 @@ export class OIDCService {
     this.clientId = clientId
     this.configurationService = new ConfigurationService(authority)
 
-    this.watchExpiration()
-    setInterval(this.watchExpiration.bind(this), 5000)
+    this._watchExpiration()
+      .then(() => window.location.reload())
+    setInterval(this._watchExpiration.bind(this), 5000)
   }
 
-  watchExpiration () {
-    if (!this.getSession()?.userInfo) {
-      return
-    }
-
-    if (this.getSession().expires_at < Date.now() + 30000) {
-      this.signInSilent().catch(e => {
-        if (e.message !== 'Failed to fetch') {
-          this.forgetSession()
-          window.location.reload()
-        }
-      })
-    }
-  }
-
-  async signInRedirect (redirectUri) {
+  async signInRedirect(redirectUri) {
     const endpoint = await this.configurationService.getAuthEndpoint()
 
     if (!endpoint) {
-      throw new Error("Can't obtain endpoint")
+      throw new Error('Cant obtain endpoint')
     }
 
     const parameters = [
-      this.constructParam(this.CLIENT_ID_PARAMETER, this.clientId),
-      this.constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
-      this.constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
-      this.constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID)
+      this._constructParam(this.CLIENT_ID_PARAMETER, this.clientId),
+      this._constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
+      this._constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
+      this._constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID)
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
@@ -61,32 +48,11 @@ export class OIDCService {
     window.location.href = href
   }
 
-  async signOutRedirect (redirectUri) {
-    const endpoint = await this.configurationService.getLogoutEndpoint()
-
-    if (!endpoint) {
-      throw new Error("Can't obtain endpoint")
-    }
-
-    const idToken = this.getSession().id_token
-
-    const parameters = [
-      this.constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
-      this.constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, idToken)
-    ].join('&')
-
-    const href = [endpoint, '?', parameters].join('')
-
-    localStorage.removeItem(this.AUTH)
-
-    window.location.href = href
-  }
-
-  async signInRedirectCallback (code) {
+  async signInRedirectCallback(code) {
     const endpoint = await this.configurationService.getTokenEndpoint()
 
     if (!endpoint) {
-      throw new Error("Can't obtain endpoint")
+      throw new Error('Cant obtain endpoint')
     }
 
     const response = await fetch(endpoint,
@@ -103,21 +69,21 @@ export class OIDCService {
     const json = await response.json()
 
     if (!json.expires_in) {
-      throw new Error("Can't obtain token")
+      throw new Error('Cant obtain token')
     }
 
     json.expires_at = Date.now() + json.expires_in * 1000
 
     localStorage.setItem(this.AUTH, JSON.stringify(json))
 
-    await this.getUserInfo()
+    await this._getUserInfo()
   }
 
-  async signInSilent () {
+  async signInSilent() {
     const endpoint = await this.configurationService.getTokenEndpoint()
 
     if (!endpoint) {
-      throw new Error("Can't obtain endpoint")
+      throw new Error('Cant obtain endpoint')
     }
 
     const session = this.getSession()
@@ -142,14 +108,47 @@ export class OIDCService {
 
     localStorage.setItem(this.AUTH, JSON.stringify(json))
 
-    await this.getUserInfo()
+    await this._getUserInfo()
   }
 
-  async getUserInfo () {
+  async signOutRedirect(redirectUri) {
+    const endpoint = await this.configurationService.getLogoutEndpoint()
+
+    if (!endpoint) {
+      throw new Error('Cant obtain endpoint')
+    }
+
+    const idToken = this.getSession().id_token
+
+    const parameters = [
+      this._constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
+      this._constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, idToken)
+    ].join('&')
+
+    const href = [endpoint, '?', parameters].join('')
+
+    localStorage.removeItem(this.AUTH)
+
+    window.location.href = href
+  }
+
+  isLoggingIn() {
+    return !!localStorage.getItem(this.ACTIVE_REDIRECT_URI)
+  }
+
+  cancelLogin() {
+    localStorage.removeItem(this.ACTIVE_REDIRECT_URI)
+  }
+
+  getSession() {
+    return JSON.parse(localStorage.getItem(this.AUTH))
+  }
+
+  async _getUserInfo() {
     const endpoint = await this.configurationService.getUserInfoEndpoint()
 
     if (!endpoint) {
-      throw new Error("Can't obtain endpoint")
+      throw new Error('Cant obtain endpoint')
     }
 
     const auth = this.getSession()
@@ -169,24 +168,33 @@ export class OIDCService {
     localStorage.setItem(this.AUTH, JSON.stringify(auth))
   }
 
-  isLoggingIn () {
-    return !!localStorage.getItem(this.ACTIVE_REDIRECT_URI)
-  }
-
-  cancelLogin () {
-    localStorage.removeItem(this.ACTIVE_REDIRECT_URI)
-  }
-
-  getSession () {
-    return JSON.parse(localStorage.getItem(this.AUTH))
-  }
-
-  forgetSession () {
-    localStorage.removeItem(this.AUTH)
-  }
-
-  constructParam (name, value) {
+  _constructParam(name, value) {
     return name.concat('=')
       .concat(value)
+  }
+
+  _watchExpiration() {
+    return new Promise((resolve) => {
+      if (!this.getSession()?.userInfo || !this._isExpiring()) {
+        return
+      }
+
+      this.signInSilent()
+        .then(() => resolve())
+        .catch(e => {
+          if (e.message !== 'Failed to fetch') {
+            this._forgetSession()
+            window.location.reload()
+          }
+        })
+    })
+  }
+
+  _isExpiring() {
+    return this.getSession().expires_at < Date.now() + 30000
+  }
+
+  _forgetSession() {
+    localStorage.removeItem(this.AUTH)
   }
 }

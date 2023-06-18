@@ -4,6 +4,7 @@ import { isCapacitorNative, isElectron } from './src/utils/EnvUtils.js'
 import { populateDefaults } from './src/utils/ConfigUtil.js'
 
 export class AuthService extends BrowserService {
+
   constructor (userConfig) {
     const config = populateDefaults(userConfig)
 
