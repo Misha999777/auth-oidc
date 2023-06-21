@@ -13,7 +13,7 @@ export class AuthService {
     this.autoLogin = config.autoLogin
     this.errorHandler = config.errorHandler
 
-    if (isCapacitorNative(window)) {
+    if (isCapacitorNative()) {
       this.redirectUrl = config.capacitorRedirectUrl
     } else if (isElectron()) {
       this.redirectUrl = config.electronRedirectUrl

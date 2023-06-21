@@ -4,7 +4,7 @@ export function isElectron () {
         navigator.userAgent.indexOf('Electron') >= 0
 }
 
-export function isCapacitorNative (window) {
+export function isCapacitorNative() {
   const capacitor = window.Capacitor
 
   return !!(capacitor && capacitor.isNativePlatform)
