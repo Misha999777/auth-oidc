@@ -1,14 +1,17 @@
 {
   "name": "tcomad-oidc",
-  "version": "4.1.9",
+  "version": "4.1.15",
   "type": "module",
-  "exports": "./index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "author": "Mykhailo Hroshevyi",
   "description": "Small JS library to authenticate with OpenID Connect auth service (f.e. Keycloak)",
+  "license": "MIT",
   "repository": "https://github.com/Misha999777/tcomad-oidc",
   "keywords": [
     "oidc",
     "oauth",
+    "oauth2",
     "authentication",
     "login",
     "keycloak",
@@ -19,13 +22,15 @@
     "electron",
     "capacitor"
   ],
-  "license": "MIT",
   "scripts": {
     "lint": "eslint . --ext js --max-warnings 0",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "build": "rollup --config"
   },
   "devDependencies": {
     "eslint": "^8.38.0",
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "rollup": "^3.26.0",
+    "rollup-plugin-copy": "^3.4.0"
   }
 }
