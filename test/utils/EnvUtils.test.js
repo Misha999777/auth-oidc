@@ -2,6 +2,7 @@ import {describe, it, expect, afterEach} from '@jest/globals';
 import {isCapacitorNative, isElectron} from "../../src/utils/EnvUtils.js";
 
 describe("isCapacitorNative", function () {
+
   afterEach(() => {
     delete global.window
     delete global.navigator
@@ -35,6 +36,7 @@ describe("isCapacitorNative", function () {
 });
 
 describe("isElectron", function () {
+
   it("UserAgent Electron", function () {
     global.navigator = {
       userAgent: "Electron"

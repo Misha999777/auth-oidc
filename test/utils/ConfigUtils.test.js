@@ -2,6 +2,7 @@ import {jest, describe, it, expect, afterEach} from '@jest/globals';
 import {defaultErrorHandler, populateDefaults} from "../../src/utils/ConfigUtil.js";
 
 describe("PopulateDefaults", function() {
+
   it("Empty user config", function() {
     expect(populateDefaults({}))
       .toEqual({
@@ -28,6 +29,7 @@ describe("PopulateDefaults", function() {
 });
 
 describe("defaultErrorHandler", function() {
+
   afterEach(() => {
     jest.clearAllMocks();
   });
