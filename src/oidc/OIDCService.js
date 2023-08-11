@@ -1,4 +1,6 @@
 import { ConfigurationService } from './ConfigurationService.js'
+import {ExpirationService} from "./ExpirationService.js";
+import {StorageService} from "./StorageService.js";
 
 export class OIDCService {
 
@@ -11,8 +13,22 @@ export class OIDCService {
 
   CODE = 'code'
   OPEN_ID = 'openid'
-  AUTH = 'active_auth'
-  ACTIVE_REDIRECT_URI = 'active_auth_redirect_uri'
+
+  WATCHER_ACTIONS = {
+    checkExpiration: () => {
+      return this.isLoggedIn() && this.storageService.getExpiration() < Date.now() + 30000
+    },
+    forgetSession: () => {
+      this.storageService.removeAuth()
+      window.location.reload()
+    },
+    reload: () => {
+      window.location.reload()
+    },
+    refresh: () => {
+      this.signInSilent()
+    }
+  }
 
   constructor(authority, clientId) {
     if (!authority || !clientId) {
@@ -20,11 +36,12 @@ export class OIDCService {
     }
 
     this.clientId = clientId
-    this.configurationService = new ConfigurationService(authority)
 
-    this._watchExpiration()
-      .then(() => window.location.reload())
-    setInterval(this._watchExpiration.bind(this), 5000)
+    this.configurationService = new ConfigurationService(authority)
+    this.expirationWatcher = new ExpirationService(this.WATCHER_ACTIONS)
+    this.storageService = new StorageService()
+
+    this.expirationWatcher.watchExpiration()
   }
 
   async signInRedirect(redirectUri) {
@@ -43,9 +60,8 @@ export class OIDCService {
 
     const href = [endpoint, '?', parameters].join('')
 
-    localStorage.setItem(this.ACTIVE_REDIRECT_URI, redirectUri)
-
-    window.location.href = href
+    this.storageService.setRedirectUri(redirectUri)
+    window.location.replace(href)
   }
 
   async signInRedirectCallback(code) {
@@ -62,7 +78,7 @@ export class OIDCService {
           code,
           grant_type: 'authorization_code',
           client_id: this.clientId,
-          redirect_uri: localStorage.getItem(this.ACTIVE_REDIRECT_URI)
+          redirect_uri: this.storageService.getRedirectUri()
         })
       })
 
@@ -74,7 +90,7 @@ export class OIDCService {
 
     json.expires_at = Date.now() + json.expires_in * 1000
 
-    localStorage.setItem(this.AUTH, JSON.stringify(json))
+    this.storageService.setAuth(json)
 
     await this._getUserInfo()
   }
@@ -86,27 +102,26 @@ export class OIDCService {
       throw new Error('Cant obtain endpoint')
     }
 
-    const session = this.getSession()
-
     const response = await fetch(endpoint,
       {
         method: 'POST',
         body: new URLSearchParams({
-          refresh_token: session.refresh_token,
+          refresh_token: this.storageService.getRefreshToken(),
           grant_type: 'refresh_token',
           client_id: this.clientId
         })
       })
 
-    if (!response.ok) {
+    const json = await response.json()
+
+    if (!json.expires_in) {
       throw new Error('Cant refresh token')
     }
 
-    const json = await response.json()
     json.expires_at = Date.now() + json.expires_in * 1000
-    json.userInfo = session.userInfo
+    json.userInfo = this.storageService.getUserInfo()
 
-    localStorage.setItem(this.AUTH, JSON.stringify(json))
+    this.storageService.setAuth(json)
 
     await this._getUserInfo()
   }
@@ -118,30 +133,28 @@ export class OIDCService {
       throw new Error('Cant obtain endpoint')
     }
 
-    const idToken = this.getSession().id_token
-
     const parameters = [
       this._constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
-      this._constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, idToken)
+      this._constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, this.storageService.getIdToken())
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
 
-    localStorage.removeItem(this.AUTH)
+    this.storageService.removeAuth()
 
-    window.location.href = href
+    window.location.replace(href)
+  }
+
+  isLoggedIn() {
+    return this.storageService.getAuth() && this.storageService.getUserInfo()
   }
 
   isLoggingIn() {
-    return !!localStorage.getItem(this.ACTIVE_REDIRECT_URI)
+    return !!this.storageService.getRedirectUri()
   }
 
   cancelLogin() {
-    localStorage.removeItem(this.ACTIVE_REDIRECT_URI)
-  }
-
-  getSession() {
-    return JSON.parse(localStorage.getItem(this.AUTH))
+    this.storageService.removeRedirectUri()
   }
 
   async _getUserInfo() {
@@ -151,50 +164,23 @@ export class OIDCService {
       throw new Error('Cant obtain endpoint')
     }
 
-    const auth = this.getSession()
-
     const response = await fetch(endpoint,
       {
         method: 'GET',
-        headers: [['Authorization', 'Bearer ' + auth.access_token]]
+        headers: [['Authorization', 'Bearer ' + this.storageService.getAccessToken()]]
       })
 
-    if (!response.ok) {
+    const json = await response.json()
+
+    if (!json.sub) {
       throw new Error('Cant get user info')
     }
 
-    auth.userInfo = await response.json()
-
-    localStorage.setItem(this.AUTH, JSON.stringify(auth))
+    this.storageService.setUserInfo(json)
   }
 
   _constructParam(name, value) {
     return name.concat('=')
       .concat(value)
-  }
-
-  _watchExpiration() {
-    return new Promise((resolve) => {
-      if (!this.getSession()?.userInfo || !this._isExpiring()) {
-        return
-      }
-
-      this.signInSilent()
-        .then(() => resolve())
-        .catch(e => {
-          if (e.message !== 'Failed to fetch') {
-            this._forgetSession()
-            window.location.reload()
-          }
-        })
-    })
-  }
-
-  _isExpiring() {
-    return this.getSession().expires_at < Date.now() + 30000
-  }
-
-  _forgetSession() {
-    localStorage.removeItem(this.AUTH)
   }
 }

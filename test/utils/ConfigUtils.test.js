@@ -1,9 +1,21 @@
-import {jest, describe, it, expect, afterEach} from '@jest/globals';
+import {jest, describe, it, expect, beforeEach, beforeAll, afterAll} from '@jest/globals';
 import {defaultErrorHandler, populateDefaults} from "../../src/utils/ConfigUtil.js";
+
+beforeAll(() => {
+  jest.spyOn(global.console, 'log')
+})
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+})
 
 describe("PopulateDefaults", function() {
 
   it("Empty user config", function() {
+    //WHEN -> THEN
     expect(populateDefaults({}))
       .toEqual({
         autoLogin: false,
@@ -14,6 +26,7 @@ describe("PopulateDefaults", function() {
   });
 
   it("Full user config", function() {
+    //GIVEN
     const testErrorHandler = function() {};
     const config = {
       custom: 'option',
@@ -23,6 +36,7 @@ describe("PopulateDefaults", function() {
       capacitorRedirectUrl: 'http://another.domain/'
     }
 
+    //WHEN -> THEN
     expect(populateDefaults(config))
       .toEqual(config);
   });
@@ -30,15 +44,11 @@ describe("PopulateDefaults", function() {
 
 describe("defaultErrorHandler", function() {
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("Nominal", function() {
-    jest.spyOn(global.console, 'log')
-
+    //WHEN
     defaultErrorHandler('Test Error')
 
+    //THEN
     expect(console.log).toBeCalledTimes(1)
     expect(console.log).toBeCalledWith('Test Error');
   });
