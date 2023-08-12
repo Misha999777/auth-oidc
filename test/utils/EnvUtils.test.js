@@ -1,12 +1,12 @@
 import {describe, it, expect, afterEach} from '@jest/globals';
 import {isCapacitorNative, isElectron} from "../../src/utils/EnvUtils.js";
 
-describe("isCapacitorNative", function () {
+afterEach(() => {
+  delete global.window
+  delete global.navigator
+});
 
-  afterEach(() => {
-    delete global.window
-    delete global.navigator
-  });
+describe("isCapacitorNative", function () {
 
   it("Capacitor defined, native platform", function () {
     global.window = {

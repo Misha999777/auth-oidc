@@ -1,17 +1,18 @@
 import { populateDefaults } from "../utils/ConfigUtil.js";
-import { OIDCService } from "./OIDCService.js";
+import { OIDCService } from "../oidc/OIDCService.js";
 import { isCapacitorNative, isElectron } from "../utils/EnvUtils.js";
+import {StorageService} from "../oidc/StorageService.js";
 
 export class AuthService {
 
   constructor (userConfig) {
     const config = populateDefaults(userConfig)
 
-    const oidcService = new OIDCService(config.authority, config.clientId)
-
-    this.oidcService = oidcService
     this.autoLogin = config.autoLogin
     this.errorHandler = config.errorHandler
+
+    this.oidcService = new OIDCService(config.authority, config.clientId)
+    this.storageService = new StorageService()
 
     if (isCapacitorNative()) {
       this.redirectUrl = config.capacitorRedirectUrl
@@ -33,7 +34,7 @@ export class AuthService {
   }
 
   isLoggedIn() {
-    return !!this.oidcService.getSession()?.userInfo
+    return this.oidcService.isLoggedIn()
   }
 
   getUserInfo(claim) {
@@ -41,8 +42,7 @@ export class AuthService {
       throw new Error('No active auth or auth is in progress')
     }
 
-    const session = this.oidcService.getSession()
-    return session.userInfo[claim]
+    return this.storageService.getUserClaim(claim)
   }
 
   getToken() {
@@ -50,7 +50,7 @@ export class AuthService {
       throw new Error('No active auth or auth is in progress')
     }
 
-    return this.oidcService.getSession().access_token
+    return this.storageService.getAccessToken()
   }
 
   async tryToRefresh() {
