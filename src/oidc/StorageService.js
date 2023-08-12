@@ -10,38 +10,43 @@ export class StorageService {
     }
 
     setUserInfo(userInfo) {
-        const session = localStorage.getItem(this.AUTH);
-        session.userInfo = JSON.stringify(userInfo);
-        localStorage.setItem(this.AUTH, session);
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        session.userInfo = userInfo;
+        localStorage.setItem(this.AUTH, JSON.stringify(session));
     }
 
     getAuth() {
-        return localStorage.getItem(this.AUTH);
+        return JSON.parse(localStorage.getItem(this.AUTH))
     }
 
     getUserInfo() {
-        return localStorage.getItem(this.AUTH).userInfo;
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        return session.userInfo;
     }
 
     getUserClaim(claim) {
-        const session = localStorage.getItem(this.AUTH);
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
         return session.userInfo[claim]
     }
 
     getExpiration() {
-        return localStorage.getItem(this.AUTH).expires_at;
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        return session.expires_at;
     }
 
     getIdToken() {
-        return localStorage.getItem(this.AUTH).id_token;
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        return session.id_token;
     }
 
     getAccessToken() {
-        return localStorage.getItem(this.AUTH).access_token;
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        return session.access_token;
     }
 
     getRefreshToken() {
-        return localStorage.getItem(this.AUTH).refresh_token;
+        const session = JSON.parse(localStorage.getItem(this.AUTH))
+        return session.refresh_token;
     }
 
     removeAuth() {

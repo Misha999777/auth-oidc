@@ -25,8 +25,8 @@ export class OIDCService {
     reload: () => {
       window.location.reload()
     },
-    refresh: () => {
-      this.signInSilent()
+    refresh: async () => {
+      await this.signInSilent()
     }
   }
 

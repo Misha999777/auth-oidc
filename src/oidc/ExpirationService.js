@@ -10,16 +10,16 @@ export class ExpirationService {
   }
 
   _checkExpiration() {
-    if (!this.actions.checkExpirationFunc()) {
-      delete this.actions.onRefresh
+    if (!this.actions.checkExpiration()) {
+      delete this.actions.reload
       return
     }
 
-    this.actions.refreshFunc()
-      .then(() => this.actions.onRefresh && this.actions.onRefresh())
+    this.actions.refresh()
+      .then(() => this.actions.reload && this.actions.reload())
       .catch(e => {
         if (e.message !== 'Failed to fetch') {
-          this.actions.onFail()
+          this.actions.forgetSession()
         }
       })
   }
