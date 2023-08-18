@@ -6,16 +6,16 @@ export class ExpirationService {
 
   watchExpiration() {
     this._checkExpiration()
-    setInterval(this._checkExpiration.bind(this), 5000)
+    setInterval(this._checkExpiration, 5000)
   }
 
-  _checkExpiration() {
+  _checkExpiration = () => {
     if (!this.actions.checkExpiration()) {
       delete this.actions.reload
-      return
+      return Promise.resolve()
     }
 
-    this.actions.refresh()
+    return this.actions.refresh()
       .then(() => this.actions.reload && this.actions.reload())
       .catch(e => {
         if (e.message !== 'Failed to fetch') {
