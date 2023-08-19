@@ -11,7 +11,7 @@ export class StorageService {
 
     setUserInfo(userInfo) {
         const session = JSON.parse(localStorage.getItem(this.AUTH))
-        session.userInfo = userInfo;
+        session.user_info = userInfo;
         localStorage.setItem(this.AUTH, JSON.stringify(session));
     }
 
@@ -21,12 +21,12 @@ export class StorageService {
 
     getUserInfo() {
         const session = JSON.parse(localStorage.getItem(this.AUTH))
-        return session.userInfo;
+        return session.user_info;
     }
 
     getUserClaim(claim) {
         const session = JSON.parse(localStorage.getItem(this.AUTH))
-        return session.userInfo[claim]
+        return session.user_info[claim]
     }
 
     getExpiration() {
