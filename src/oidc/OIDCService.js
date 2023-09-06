@@ -146,7 +146,7 @@ export class OIDCService {
   }
 
   isLoggedIn() {
-    return this.storageService.getAuth() && this.storageService.getUserInfo()
+    return !!this.storageService.getAuth() && !!this.storageService.getUserInfo()
   }
 
   isLoggingIn() {
