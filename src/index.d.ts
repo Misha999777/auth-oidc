@@ -1,4 +1,4 @@
-declare module 'tcomad-oidc' {
+declare module 'auth-oidc' {
 
     export class AuthService {
         constructor(config: Config);
