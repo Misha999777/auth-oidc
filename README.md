@@ -15,11 +15,11 @@
 ## How to use
 ### 1. Install library using npm
 
-<pre>npm install tcomad-oidc --save</pre>
+<pre>npm install auth-oidc --save</pre>
 
 ### 2. Import AuthService
 
-<pre>import {AuthService} from "tcomad-oidc";</pre>
+<pre>import {AuthService} from "auth-oidc";</pre>
 
 ### 3. Initialize AuthService
 
