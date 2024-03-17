@@ -9,7 +9,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Misha999777/tcomad-oidc.git"
+    "url": "git+https://github.com/Misha999777/auth-oidc.git"
   },
   "keywords": [
     "oidc",
