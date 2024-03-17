@@ -1,6 +1,6 @@
-import { populateDefaults } from "../utils/ConfigUtil.js";
-import { OIDCService } from "../oidc/OIDCService.js";
-import { isCapacitorNative, isElectron } from "../utils/EnvUtils.js";
+import {populateDefaults} from "../utils/ConfigUtil.js";
+import {OIDCService} from "../oidc/OIDCService.js";
+import {isCapacitorNative, isElectron} from "../utils/EnvUtils.js";
 import {StorageService} from "../oidc/StorageService.js";
 
 export class AuthService {
