@@ -1,92 +1,92 @@
-import {jest, describe, it, expect, afterAll, beforeEach, beforeAll} from '@jest/globals';
-import {ConfigurationService} from "../../src/oidc/ConfigurationService.js";
-import {mockFetch, mockJson} from "../mocks/Fetch.mock.js";
+import {jest, describe, it, expect, afterAll, beforeEach, beforeAll} from '@jest/globals'
+import {mockFetch, mockJson} from '../mocks/Fetch.mock.js'
+import {ConfigurationService} from '../../src/oidc/ConfigurationService.js'
 
-const authorityUrl = "https://server.com/project"
-const configurationEndpoint = authorityUrl + "/.well-known/openid-configuration"
+const authorityUrl = 'https://server.com/project'
+const configurationEndpoint = authorityUrl + '/.well-known/openid-configuration'
 const configuration = {
-  authorization_endpoint: "/auth",
-  token_endpoint: "/token",
-  userinfo_endpoint: "/user",
-  end_session_endpoint: "/logout"
+  authorization_endpoint: '/auth',
+  token_endpoint: '/token',
+  userinfo_endpoint: '/user',
+  end_session_endpoint: '/logout'
 }
 
-let unit;
+let unit
 
 beforeAll(() => {
-  global.fetch = mockFetch;
+  global.fetch = mockFetch
 })
 
 beforeEach(() => {
-  unit = new ConfigurationService(authorityUrl);
-  jest.clearAllMocks();
-});
-
-afterAll(() => {
-  delete global.fetch;
+  unit = new ConfigurationService(authorityUrl)
+  jest.clearAllMocks()
 })
 
-describe("ConfigurationService", function() {
+afterAll(() => {
+  delete global.fetch
+})
 
-  it("getAuthEndpoint", async function() {
+describe('ConfigurationService', function () {
+
+  it('getAuthEndpoint', async function () {
     //GIVEN
-    mockJson.mockResolvedValue(configuration);
+    mockJson.mockResolvedValue(configuration)
 
     //WHEN
     expect(await unit.getAuthEndpoint())
-      .toEqual("/auth");
+      .toEqual('/auth')
 
     //THEN
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'});
-    expect(mockJson).toHaveBeenCalledTimes(1);
-  });
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'})
+    expect(mockJson).toHaveBeenCalledTimes(1)
+  })
 
-  it("getTokenEndpoint", async function() {
+  it('getTokenEndpoint', async function () {
     //GIVEN
-    mockJson.mockResolvedValue(configuration);
+    mockJson.mockResolvedValue(configuration)
 
     //WHEN
     expect(await unit.getTokenEndpoint())
-      .toEqual("/token");
+      .toEqual('/token')
 
     //THEN
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'});
-    expect(mockJson).toHaveBeenCalledTimes(1);
-  });
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'})
+    expect(mockJson).toHaveBeenCalledTimes(1)
+  })
 
-  it("getUserInfoEndpoint", async function() {
+  it('getUserInfoEndpoint', async function () {
     //GIVEN
-    mockJson.mockResolvedValue(configuration);
+    mockJson.mockResolvedValue(configuration)
 
     //WHEN
     expect(await unit.getUserInfoEndpoint())
-      .toEqual("/user");
+      .toEqual('/user')
 
     //THEN
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'});
-    expect(mockJson).toHaveBeenCalledTimes(1);
-  });
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'})
+    expect(mockJson).toHaveBeenCalledTimes(1)
+  })
 
-  it("getLogoutEndpoint", async function() {
+  it('getLogoutEndpoint', async function () {
     //GIVEN
-    mockJson.mockResolvedValue(configuration);
+    mockJson.mockResolvedValue(configuration)
 
     //WHEN
     expect(await unit.getLogoutEndpoint())
-      .toEqual("/logout");
+      .toEqual('/logout')
 
     //THEN
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'});
-    expect(mockJson).toHaveBeenCalledTimes(1);
-  });
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'})
+    expect(mockJson).toHaveBeenCalledTimes(1)
+  })
 
-  it("Only fetch once", async function() {
+  it('Only fetch once', async function () {
     //GIVEN
-    mockJson.mockResolvedValue(configuration);
+    mockJson.mockResolvedValue(configuration)
 
     //WHEN
     await unit.getAuthEndpoint()
@@ -95,8 +95,8 @@ describe("ConfigurationService", function() {
     await unit.getLogoutEndpoint()
 
     //THEN
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'});
-    expect(mockJson).toHaveBeenCalledTimes(1);
-  });
-});
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(mockFetch).toHaveBeenCalledWith(configurationEndpoint, {method: 'GET'})
+    expect(mockJson).toHaveBeenCalledTimes(1)
+  })
+})

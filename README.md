@@ -19,11 +19,11 @@
 
 ### 2. Import AuthService
 
-<pre>import {AuthService} from "auth-oidc";</pre>
+<pre>import {AuthService} from 'auth-oidc'</pre>
 
 ### 3. Initialize AuthService
 
-<pre>new AuthService(config);</pre>
+<pre>new AuthService(config)</pre>
 
 Config object fields:
 1. **authority**: URL to the authentication service (f.e. http://[host]/realms/[realm-name])
@@ -34,10 +34,10 @@ Config object fields:
     * Defaults to false
 5. (OPTIONAL) **electronRedirectUrl**: URL which must be used to return user to Electron app
     * Will only be used if Electron context detected
-    * Defaults to "http://localhost/"
+    * Defaults to 'http://localhost/'
 6. (OPTIONAL) **capacitorRedirectUrl**: URL which must be used to return user to Capacitor app
     * Will only be used if Capacitor context detected
-    * Defaults to http://localhost/"
+    * Defaults to 'http://localhost/'
 
 
 ### 4. Start login
@@ -51,7 +51,7 @@ You can check login status with
 
 ### 6. Get user info claims
 To get user info claim you can use
-<pre>authService.getUserInfo("name")</pre>
+<pre>authService.getUserInfo('name')</pre>
 
 ### 7. Get access token to make requests
 You can get user access token with

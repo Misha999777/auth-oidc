@@ -1,36 +1,31 @@
-import {populateDefaults} from "../utils/ConfigUtil.js";
-import {OIDCService} from "../oidc/OIDCService.js";
-import {isCapacitorNative, isElectron} from "../utils/EnvUtils.js";
-import {StorageService} from "../oidc/StorageService.js";
+import {populateDefaults} from '../utils/ConfigUtil.js'
+import {isCapacitorNative, isElectron} from '../utils/EnvUtils.js'
+import {OIDCService} from '../oidc/OIDCService.js'
+import {StorageService} from '../oidc/StorageService.js'
+import {BrowserService} from './BrowserService.js'
 
 export class AuthService {
 
-  constructor (userConfig) {
-    const config = populateDefaults(userConfig)
+  constructor(userConfig) {
+    this.config = populateDefaults(userConfig)
 
-    this.autoLogin = config.autoLogin
-    this.errorHandler = config.errorHandler
-
-    this.oidcService = new OIDCService(config.authority, config.clientId)
+    this.oidcService = new OIDCService(this.config.authority, this.config.clientId)
     this.storageService = new StorageService()
 
-    if (isCapacitorNative()) {
-      this.redirectUrl = config.capacitorRedirectUrl
-    } else if (isElectron()) {
-      this.redirectUrl = config.electronRedirectUrl
-    }
+    let browserService = new BrowserService(this.config.errorHandler, this.config.autoLogin, this.oidcService,
+      this.isLoggedIn.bind(this), this.login.bind(this))
 
-    this._init()
+    browserService.pageLoaded()
   }
 
   login() {
-    this.oidcService.signInRedirect(this.redirectUrl ?? window.location.href)
-      .catch(() => this.errorHandler('Auth failed: cant perform login redirect'))
+    this.oidcService.signInRedirect(this._getUrl())
+      .catch(() => this.config.errorHandler('Auth failed: cant perform login redirect'))
   }
 
   logout() {
-    this.oidcService.signOutRedirect(this.redirectUrl ?? window.location.href)
-      .catch(() => this.errorHandler('Auth failed: cant perform logout redirect'))
+    this.oidcService.signOutRedirect(this._getUrl())
+      .catch(() => this.config.errorHandler('Auth failed: cant perform logout redirect'))
   }
 
   isLoggedIn() {
@@ -61,43 +56,13 @@ export class AuthService {
     return this.oidcService.signInSilent()
   }
 
-  _init() {
-    if (!this.oidcService.isLoggingIn() && !this.isLoggedIn() && this.autoLogin) {
-      this.login()
-      return
-    }
-
-    if (!window.location.href.includes('code') && this.oidcService.isLoggingIn()) {
-      this.oidcService.cancelLogin()
-
-      const url = new URL(window.location.href)
-
-      url.searchParams.delete('error')
-      url.searchParams.delete('error_description')
-      window.history.replaceState({}, '', url.toString())
-
-      this.login()
-      return
-    }
-
-    if (this.oidcService.isLoggingIn()) {
-      const url = new URL(window.location.href)
-
-      const code = url.searchParams.get('code')
-
-      url.searchParams.delete('code')
-      url.searchParams.delete('session_state')
-
-      this.oidcService.signInRedirectCallback(code)
-        .then(() => {
-          this.oidcService.cancelLogin()
-          window.location.href = url.toString()
-        })
-        .catch(() => {
-          this.oidcService.cancelLogin()
-          window.history.replaceState({}, '', url.toString())
-          this.errorHandler('Auth failed: cant obtain token')
-        })
+  _getUrl() {
+    if (isCapacitorNative()) {
+      return this.config.capacitorRedirectUrl
+    } else if (isElectron()) {
+      return this.config.electronRedirectUrl
+    } else {
+      return window.location.href
     }
   }
 }

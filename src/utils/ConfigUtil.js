@@ -1,4 +1,4 @@
-export function populateDefaults (config) {
+export function populateDefaults(config) {
   return {
     ...config,
     autoLogin: config.autoLogin ?? false,

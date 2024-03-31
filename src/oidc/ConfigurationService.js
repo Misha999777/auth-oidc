@@ -41,7 +41,7 @@ export class ConfigurationService {
   _load() {
     const url = [this.authority, this.CONFIGURATION_ENDPOINT].join('')
 
-    return fetch(url, { method: 'GET' })
+    return fetch(url, {method: 'GET'})
       .then(response => response.json())
       .then(json => {
         this.config = json

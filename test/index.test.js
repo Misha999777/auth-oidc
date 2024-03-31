@@ -1,10 +1,10 @@
-import {describe, it, expect} from '@jest/globals';
-import {AuthService} from "../src";
+import {describe, it, expect} from '@jest/globals'
+import {AuthService} from '../src'
 
-describe("Exports", function () {
+describe('Exports', function () {
 
-  it("AuthService exported", function () {
+  it('AuthService exported', function () {
     //WHEN -> THEN
     expect(AuthService).toBeDefined()
-  });
-});
+  })
+})

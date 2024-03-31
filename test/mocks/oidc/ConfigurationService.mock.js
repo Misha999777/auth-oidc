@@ -1,4 +1,4 @@
-import {jest} from "@jest/globals";
+import {jest} from '@jest/globals'
 
 export const mockConfigurationService = {
   getAuthEndpoint: jest.fn(),
@@ -9,4 +9,4 @@ export const mockConfigurationService = {
 
 jest.unstable_mockModule('../../src/oidc/ConfigurationService.js', () => ({
   ConfigurationService: jest.fn().mockImplementation(() => mockConfigurationService),
-}));
+}))

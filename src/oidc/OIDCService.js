@@ -1,6 +1,6 @@
 import {ConfigurationService} from './ConfigurationService.js'
-import {ExpirationService} from "./ExpirationService.js";
-import {StorageService} from "./StorageService.js";
+import {ExpirationService} from './ExpirationService.js'
+import {StorageService} from './StorageService.js'
 
 export class OIDCService {
 

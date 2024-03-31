@@ -1,4 +1,4 @@
-import {jest} from "@jest/globals";
+import {jest} from '@jest/globals'
 
 export const mockWatcherActions = {
   checkExpiration: jest.fn(),
