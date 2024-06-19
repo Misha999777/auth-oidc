@@ -1,16 +1,15 @@
-# Authenticate users with OpenID Connect authentication service (f.e. Keycloak) in browser, Electron, or Capacitor app
+# Authenticate users with OpenID Connect authentication service (f.e. Keycloak)
 [![License](https://img.shields.io/:license-MIT-green.svg)](https://github.com/Misha999777/auth-oidc/blob/master/LICENSE)
 
 ## Main features:
 1. TypeScript support
 2. ESModule support
 3. Working with React, Angular and other popular front-end libraries
-4. Working in browser, Electron and Capacitor applications
-5. Logging user in using redirect to the auth service
-7. Getting user info claims
-8. Supplying access token for requests to the back-end
-9. Automatic refreshing of the access token with refresh token when it expires
-10. Logging user out from the application and from the auth service
+4. Logging user in using redirect to the auth service
+5. Getting user info claims
+6. Supplying access token for requests to the back-end
+7. Automatic refreshing of the access token with refresh token when it expires
+8. Logging user out from the application and from the auth service
 
 ## How to use
 ### 1. Install library using npm
@@ -32,18 +31,14 @@ Config object fields:
     * Defaults to (error) => console.log(error)
 4. (OPTIONAL) **autoLogin**: Determines whether authentication should start automatically when page loaded
     * Defaults to false
-5. (OPTIONAL) **electronRedirectUrl**: URL which must be used to return user to Electron app
-    * Will only be used if Electron context detected
-    * Defaults to 'http://localhost/'
-6. (OPTIONAL) **capacitorRedirectUrl**: URL which must be used to return user to Capacitor app
-    * Will only be used if Capacitor context detected
-    * Defaults to 'http://localhost/'
 
 
 ### 4. Start login
 Login will be started automatically if it was configured to do so, if no, you can start
 it by
 <pre>authService.login()</pre>
+You can also specify a URL the user will be returned to:
+<pre>authService.login('http://loclahost:3000')</pre>
 
 ### 5. Check login status
 You can check login status with
@@ -64,6 +59,8 @@ You can force lib to refresh tokens and user info with:
 ### 9. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>
+You can also specify a URL the user will be returned to:
+<pre>authService.logout('http://loclahost:3000')</pre>
 
 ## Copyright
 

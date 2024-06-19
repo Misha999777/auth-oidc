@@ -1,5 +1,4 @@
 import {populateDefaults} from '../utils/ConfigUtil.js'
-import {isCapacitorNative, isElectron} from '../utils/EnvUtils.js'
 import {OIDCService} from '../oidc/OIDCService.js'
 import {StorageService} from '../oidc/StorageService.js'
 import {BrowserService} from './BrowserService.js'
@@ -18,13 +17,13 @@ export class AuthService {
     browserService.pageLoaded()
   }
 
-  login() {
-    this.oidcService.signInRedirect(this._getUrl())
+  login(returnToUrl) {
+    this.oidcService.signInRedirect(returnToUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform login redirect'))
   }
 
-  logout() {
-    this.oidcService.signOutRedirect(this._getUrl())
+  logout(returnToUrl) {
+    this.oidcService.signOutRedirect(returnToUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform logout redirect'))
   }
 
@@ -54,15 +53,5 @@ export class AuthService {
     }
 
     return this.oidcService.signInSilent()
-  }
-
-  _getUrl() {
-    if (isCapacitorNative()) {
-      return this.config.capacitorRedirectUrl
-    } else if (isElectron()) {
-      return this.config.electronRedirectUrl
-    } else {
-      return window.location.href
-    }
   }
 }

@@ -20,9 +20,7 @@ describe('PopulateDefaults', function () {
     expect(populateDefaults({}))
       .toEqual({
         autoLogin: false,
-        errorHandler: defaultErrorHandler,
-        electronRedirectUrl: 'http://localhost/',
-        capacitorRedirectUrl: 'http://localhost/'
+        errorHandler: defaultErrorHandler
       })
   })
 
@@ -32,9 +30,7 @@ describe('PopulateDefaults', function () {
     const config = {
       custom: 'option',
       autoLogin: true,
-      errorHandler: testErrorHandler,
-      electronRedirectUrl: 'http://some.domain/',
-      capacitorRedirectUrl: 'http://another.domain/'
+      errorHandler: testErrorHandler
     }
 
     //WHEN -> THEN

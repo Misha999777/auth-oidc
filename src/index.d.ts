@@ -3,12 +3,12 @@ declare module 'auth-oidc' {
     export class AuthService {
         constructor(config: Config)
 
-        login(): void
+        login(returnToUrl?: string): void
         isLoggedIn(): boolean
         getUserInfo(claim: string): any
         getToken(): string
         tryToRefresh(): Promise<void>
-        logout(): void
+        logout(returnToUrl?: string): void
     }
 
     export interface Config {
@@ -16,7 +16,5 @@ declare module 'auth-oidc' {
         clientId: string
         autoLogin?: boolean
         errorHandler?: (error: string) => void
-        electronRedirectUrl?: string
-        capacitorRedirectUrl?: string
     }
 }

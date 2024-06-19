@@ -3,7 +3,6 @@ import {afterAll, beforeAll, beforeEach, describe, expect, it, jest} from '@jest
 import {mockOIDCService} from '../mocks/oidc/OIDCService.mock.js'
 import {mockStorageService} from '../mocks/oidc/StorageService.mock.js'
 import {mockConfigUtils} from '../mocks/utils/ConfigUtil.mock.js'
-import {mockEnvUtils} from '../mocks/utils/EnvUtils.mock.js'
 import '../mocks/auth/BrowserService.mock.js'
 
 const {AuthService} = await import('../../src/auth/AuthService.js')
@@ -16,9 +15,7 @@ const config = {
   authority: 'https://auth.com/123',
   clientId: '123',
   autoLogin: false,
-  errorHandler: mockConfigUtils.defaultErrorHandler,
-  electronRedirectUrl: 'http://localhost/',
-  capacitorRedirectUrl: 'http://localhost/'
+  errorHandler: mockConfigUtils.defaultErrorHandler
 }
 
 let unit
@@ -46,27 +43,38 @@ describe('AuthService login', function () {
   it('nominal', async function () {
     //GIVEN
     mockOIDCService.signInRedirect.mockResolvedValue()
-    unit._getUrl = jest.fn().mockReturnValue('url')
 
     //WHEN
     await unit.login()
 
     //THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
-    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith('url')
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(window.location.href)
+  })
+
+  it('with URL', async function () {
+    //GIVEN
+    const url = "https://app.com/page"
+    mockOIDCService.signInRedirect.mockResolvedValue()
+
+    //WHEN
+    await unit.login(url)
+
+    //THEN
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(url)
   })
 
   it('failed', async function () {
     //GIVEN
     mockOIDCService.signInRedirect.mockRejectedValue()
-    unit._getUrl = jest.fn().mockReturnValue('url')
 
     //WHEN
     await unit.login()
 
     //THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
-    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith('url')
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(window.location.href)
     expect(mockConfigUtils.defaultErrorHandler).toHaveBeenCalledTimes(1)
   })
 })
@@ -76,67 +84,39 @@ describe('AuthService logout', function () {
   it('nominal', async function () {
     //GIVEN
     mockOIDCService.signOutRedirect.mockResolvedValue()
-    unit._getUrl = jest.fn().mockReturnValue('url')
 
     //WHEN
     await unit.logout()
 
     //THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
-    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith('url')
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(window.location.href)
+  })
+
+  it('with URL', async function () {
+    //GIVEN
+    const url = "https://app.com/page"
+    mockOIDCService.signOutRedirect.mockResolvedValue()
+
+    //WHEN
+    await unit.logout(url)
+
+    //THEN
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(url)
   })
 
   it('failed', async function () {
     //GIVEN
     mockOIDCService.signOutRedirect.mockRejectedValue()
-    unit._getUrl = jest.fn().mockReturnValue('url')
 
     //WHEN
     await unit.logout()
 
     //THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
-    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith('url')
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(window.location.href)
     expect(mockConfigUtils.defaultErrorHandler).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe('AuthService _getUrl', function () {
-
-  it('nominal', async function () {
-    //GIVEN
-    window.location.href = 'url'
-
-    //WHEN
-    expect(unit._getUrl()).toEqual('url')
-
-    //THEN
-    expect(mockEnvUtils.isElectron).toHaveBeenCalledTimes(1)
-    expect(mockEnvUtils.isCapacitorNative).toHaveBeenCalledTimes(1)
-  })
-
-  it('capacitor', async function () {
-    //GIVEN
-    mockEnvUtils.isCapacitorNative.mockReturnValue(true)
-
-    //WHEN
-    expect(unit._getUrl()).toEqual(config.capacitorRedirectUrl)
-
-    //THEN
-    expect(mockEnvUtils.isCapacitorNative).toHaveBeenCalledTimes(1)
-  })
-
-  it('electron', async function () {
-    //GIVEN
-    mockEnvUtils.isCapacitorNative.mockReturnValue(false)
-    mockEnvUtils.isElectron.mockReturnValue(true)
-
-    //WHEN
-    expect(unit._getUrl()).toEqual(config.electronRedirectUrl)
-
-    //THEN
-    expect(mockEnvUtils.isCapacitorNative).toHaveBeenCalledTimes(1)
-    expect(mockEnvUtils.isElectron).toHaveBeenCalledTimes(1)
   })
 })
 
