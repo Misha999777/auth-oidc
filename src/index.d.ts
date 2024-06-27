@@ -14,6 +14,7 @@ declare module 'auth-oidc' {
     export interface Config {
         authority: string
         clientId: string
+        returnToUrl?: string
         autoLogin?: boolean
         errorHandler?: (error: string) => void
     }

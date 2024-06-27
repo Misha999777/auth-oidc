@@ -65,6 +65,21 @@ describe('AuthService login', function () {
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(url)
   })
 
+  it('with config URL', async function () {
+    //GIVEN
+    const url = "https://app.com/page"
+    mockConfigUtils.populateDefaults.mockReturnValue({...config, returnToUrl: url});
+    unit = new AuthService(oidcConfig)
+    mockOIDCService.signInRedirect.mockResolvedValue()
+
+    //WHEN
+    await unit.login()
+
+    //THEN
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
+    expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(url)
+  })
+
   it('failed', async function () {
     //GIVEN
     mockOIDCService.signInRedirect.mockRejectedValue()
@@ -100,6 +115,21 @@ describe('AuthService logout', function () {
 
     //WHEN
     await unit.logout(url)
+
+    //THEN
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
+    expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(url)
+  })
+
+  it('with config URL', async function () {
+    //GIVEN
+    const url = "https://app.com/page"
+    mockConfigUtils.populateDefaults.mockReturnValue({...config, returnToUrl: url});
+    unit = new AuthService(oidcConfig)
+    mockOIDCService.signOutRedirect.mockResolvedValue()
+
+    //WHEN
+    await unit.logout()
 
     //THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)

@@ -18,12 +18,12 @@ export class AuthService {
   }
 
   login(returnToUrl) {
-    this.oidcService.signInRedirect(returnToUrl ?? window.location.href)
+    this.oidcService.signInRedirect(returnToUrl ?? this.config.returnToUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform login redirect'))
   }
 
   logout(returnToUrl) {
-    this.oidcService.signOutRedirect(returnToUrl ?? window.location.href)
+    this.oidcService.signOutRedirect(returnToUrl ?? this.config.returnToUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform logout redirect'))
   }
 
