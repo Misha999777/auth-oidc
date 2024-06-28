@@ -27,18 +27,20 @@
 Config object fields:
 1. **authority**: URL to the authentication service (f.e. http://[host]/realms/[realm-name])
 2. **clientId**: ID of the application registered within authentication service
-3. (OPTIONAL) **errorHandler**: callback function that will be called in case of auth errors
+3. (OPTIONAL) **autoLogin**: whether authentication should start automatically on page load
+   * Defaults to false
+4. (OPTIONAL) **callbackUrl**: a URL the user will be returned to after completing login/logout
+   * Defaults to window.location.href
+5. (OPTIONAL) **errorHandler**: callback function that will be called in case of auth errors
     * Defaults to (error) => console.log(error)
-4. (OPTIONAL) **autoLogin**: Determines whether authentication should start automatically when page loaded
-    * Defaults to false
 
 
 ### 4. Start login
 Login will be started automatically if it was configured to do so, if no, you can start
 it by
 <pre>authService.login()</pre>
-You can also specify a URL the user will be returned to:
-<pre>authService.login('http://loclahost:3000')</pre>
+You can also override a URL the user will be returned to after login:
+<pre>authService.login('http://loclahost:3000/page')</pre>
 
 ### 5. Check login status
 You can check login status with
@@ -59,8 +61,8 @@ You can force lib to refresh tokens and user info with:
 ### 9. Logout user
 You can log out user from your application and authentication service with
 <pre>authService.logout()</pre>
-You can also specify a URL the user will be returned to:
-<pre>authService.logout('http://loclahost:3000')</pre>
+You can also override a URL the user will be returned to after logout:
+<pre>authService.logout('http://loclahost:3000/page')</pre>
 
 ## Copyright
 

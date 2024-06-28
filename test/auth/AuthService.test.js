@@ -68,7 +68,7 @@ describe('AuthService login', function () {
   it('with config URL', async function () {
     //GIVEN
     const url = "https://app.com/page"
-    mockConfigUtils.populateDefaults.mockReturnValue({...config, returnToUrl: url});
+    mockConfigUtils.populateDefaults.mockReturnValue({...config, callbackUrl: url});
     unit = new AuthService(oidcConfig)
     mockOIDCService.signInRedirect.mockResolvedValue()
 
@@ -124,7 +124,7 @@ describe('AuthService logout', function () {
   it('with config URL', async function () {
     //GIVEN
     const url = "https://app.com/page"
-    mockConfigUtils.populateDefaults.mockReturnValue({...config, returnToUrl: url});
+    mockConfigUtils.populateDefaults.mockReturnValue({...config, callbackUrl: url});
     unit = new AuthService(oidcConfig)
     mockOIDCService.signOutRedirect.mockResolvedValue()
 

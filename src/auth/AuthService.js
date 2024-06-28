@@ -17,13 +17,13 @@ export class AuthService {
     browserService.pageLoaded()
   }
 
-  login(returnToUrl) {
-    this.oidcService.signInRedirect(returnToUrl ?? this.config.returnToUrl ?? window.location.href)
+  login(callbackUrl) {
+    this.oidcService.signInRedirect(callbackUrl ?? this.config.callbackUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform login redirect'))
   }
 
-  logout(returnToUrl) {
-    this.oidcService.signOutRedirect(returnToUrl ?? this.config.returnToUrl ?? window.location.href)
+  logout(callbackUrl) {
+    this.oidcService.signOutRedirect(callbackUrl ?? this.config.callbackUrl ?? window.location.href)
       .catch(() => this.config.errorHandler('Auth failed: cant perform logout redirect'))
   }
 
