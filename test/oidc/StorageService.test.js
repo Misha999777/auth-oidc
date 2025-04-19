@@ -4,6 +4,7 @@ import {mockLocalStorage} from '../mocks/LocalStorage.mock.js'
 import {StorageService} from '../../src/oidc/StorageService.js'
 
 const redirectUri = 'https://app.com/'
+const verifier = 'abc'
 const auth = {
   access_token: 'access-token',
   refresh_token: 'refresh_token',
@@ -160,7 +161,7 @@ describe('StorageService', function () {
     localStorage.getItem.mockReturnValue(redirectUri)
 
     //WHEN
-    const actualResult = unit.getRedirectUri(redirectUri)
+    const actualResult = unit.getRedirectUri()
 
     //THEN
     expect(actualResult).toEqual(redirectUri)
@@ -169,10 +170,40 @@ describe('StorageService', function () {
 
   it('removeRedirectUri', function () {
     //WHEN
-    unit.removeRedirectUri(redirectUri)
+    unit.removeRedirectUri()
 
     //THEN
     expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
     expect(localStorage.removeItem).toHaveBeenCalledWith(unit.ACTIVE_REDIRECT_URI)
+  })
+
+  it('setVerifier', function () {
+    //WHEN
+    unit.setVerifier(verifier)
+
+    //THEN
+    expect(localStorage.setItem).toHaveBeenCalledTimes(1)
+    expect(localStorage.setItem).toHaveBeenCalledWith(unit.VERIFIER, verifier)
+  })
+
+  it('getVerifier', function () {
+    //GIVEN
+    localStorage.getItem.mockReturnValue(verifier)
+
+    //WHEN
+    const actualResult = unit.getVerifier()
+
+    //THEN
+    expect(actualResult).toEqual(verifier)
+    expect(localStorage.getItem).toHaveBeenCalledTimes(1)
+  })
+
+  it('removeVerifier', function () {
+    //WHEN
+    unit.removeVerifier()
+
+    //THEN
+    expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
+    expect(localStorage.removeItem).toHaveBeenCalledWith(unit.VERIFIER)
   })
 })

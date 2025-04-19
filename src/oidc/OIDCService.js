@@ -10,9 +10,12 @@ export class OIDCService {
   ID_TOKEN_HINT_URI_PARAMETER = 'id_token_hint'
   RESPONSE_TYPE_PARAMETER = 'response_type'
   SCOPE_URI_PARAMETER = 'scope'
+  CODE_CHALLENGE = 'code_challenge'
+  CHALLENGE_METHOD = 'code_challenge_method'
 
   CODE = 'code'
   OPEN_ID = 'openid'
+  S256 = 'S256'
 
   WATCHER_ACTIONS = {
     checkExpiration: () => {
@@ -51,16 +54,22 @@ export class OIDCService {
       throw new Error('Cant obtain endpoint')
     }
 
+    const codeVerifier = this._generateCodeVerifier();
+    const codeChallenge = await this._generateCodeChallenge(codeVerifier);
+
     const parameters = [
       this._constructParam(this.CLIENT_ID_PARAMETER, this.clientId),
       this._constructParam(this.REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
       this._constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
-      this._constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID)
+      this._constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID),
+      this._constructParam(this.CODE_CHALLENGE, codeChallenge),
+      this._constructParam(this.CHALLENGE_METHOD, this.S256)
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
 
     this.storageService.setRedirectUri(redirectUri)
+    this.storageService.setVerifier(codeVerifier)
     window.location.replace(href)
   }
 
@@ -78,7 +87,8 @@ export class OIDCService {
           code,
           grant_type: 'authorization_code',
           client_id: this.clientId,
-          redirect_uri: this.storageService.getRedirectUri()
+          redirect_uri: this.storageService.getRedirectUri(),
+          code_verifier: this.storageService.getVerifier()
         })
       })
 
@@ -155,6 +165,7 @@ export class OIDCService {
 
   cancelLogin() {
     this.storageService.removeRedirectUri()
+    this.storageService.removeVerifier()
   }
 
   async _getUserInfo() {
@@ -177,6 +188,25 @@ export class OIDCService {
     }
 
     this.storageService.setUserInfo(json)
+  }
+
+  _generateCodeVerifier() {
+    const randomBytes = window.crypto.getRandomValues(new Uint8Array(64));
+    return this._base64UrlEncode(randomBytes.buffer);
+  }
+
+  async _generateCodeChallenge(codeVerifier) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(codeVerifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return this._base64UrlEncode(digest);
+  }
+
+  _base64UrlEncode(arrayBuffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 
   _constructParam(name, value) {

@@ -18,13 +18,15 @@ const code = 'code'
 const accessToken = 'access-token'
 const refreshToken = 'refresh-token'
 const idToken = 'id-token'
+const challenge = 'f2LwESBr8ezpvlZBEeqfvb4yeNpHC5Nc90_scF04hgM'
+const verifier = 'AQIDBA'
 
 let unit
 
 beforeAll(() => {
   jest.useFakeTimers()
   global.setInterval = jest.fn()
-  global.window = {location: {replace: jest.fn(), reload: jest.fn()}}
+  global.window = {location: {replace: jest.fn(), reload: jest.fn()}, crypto: {getRandomValues: jest.fn()}}
   global.fetch = mockFetch
 })
 
@@ -45,8 +47,10 @@ describe('ConfigurationService signInRedirect', function () {
   it('nominal', async function () {
     //GIVEN
     const expectedAuthUri = authUrl + '?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri)
-      + '&response_type=code&scope=openid'
+      + '&response_type=code&scope=openid' + '&code_challenge=' + challenge + '&code_challenge_method=S256'
+
     mockConfigurationService.getAuthEndpoint.mockReturnValue(authUrl)
+    window.crypto.getRandomValues.mockImplementation(() => new Uint8Array([1, 2, 3, 4]))
 
     //WHEN
     await unit.signInRedirect(redirectUri)
@@ -54,8 +58,14 @@ describe('ConfigurationService signInRedirect', function () {
     //THEN
     expect(mockConfigurationService.getAuthEndpoint).toHaveBeenCalledTimes(1)
 
+    expect(window.crypto.getRandomValues).toHaveBeenCalledTimes(1)
+    expect(window.crypto.getRandomValues).toHaveBeenCalledWith(new Uint8Array(64))
+
     expect(mockStorageService.setRedirectUri).toHaveBeenCalledTimes(1)
     expect(mockStorageService.setRedirectUri).toHaveBeenCalledWith(redirectUri)
+
+    expect(mockStorageService.setVerifier).toHaveBeenCalledTimes(1)
+    expect(mockStorageService.setVerifier).toHaveBeenCalledWith(verifier)
 
     expect(window.location.replace).toHaveBeenCalledTimes(1)
     expect(window.location.replace).toHaveBeenCalledWith(expectedAuthUri)
@@ -72,7 +82,8 @@ describe('ConfigurationService signInRedirectCallback', function () {
         code,
         grant_type: 'authorization_code',
         client_id: clientId,
-        redirect_uri: redirectUri
+        redirect_uri: redirectUri,
+        code_verifier: verifier
       })
     }
     const serverAuth = {expires_in: 10}
@@ -80,6 +91,7 @@ describe('ConfigurationService signInRedirectCallback', function () {
 
     mockConfigurationService.getTokenEndpoint.mockReturnValue(tokenUrl)
     mockStorageService.getRedirectUri.mockReturnValue(redirectUri)
+    mockStorageService.getVerifier.mockReturnValue(verifier)
     mockJson.mockResolvedValueOnce(serverAuth)
 
     unit._getUserInfo = jest.fn()

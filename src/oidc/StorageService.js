@@ -2,6 +2,7 @@ export class StorageService {
 
   AUTH = 'active_auth'
   ACTIVE_REDIRECT_URI = 'active_auth_redirect_uri'
+  VERIFIER = 'verifier'
 
   setAuth(auth) {
     localStorage.setItem(this.AUTH, JSON.stringify(auth))
@@ -61,5 +62,17 @@ export class StorageService {
 
   removeRedirectUri() {
     localStorage.removeItem(this.ACTIVE_REDIRECT_URI)
+  }
+
+  setVerifier(verifier) {
+    localStorage.setItem(this.VERIFIER, verifier)
+  }
+
+  getVerifier() {
+    return localStorage.getItem(this.VERIFIER)
+  }
+
+  removeVerifier() {
+    localStorage.removeItem(this.VERIFIER)
   }
 }

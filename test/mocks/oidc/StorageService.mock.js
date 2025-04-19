@@ -13,7 +13,10 @@ export const mockStorageService = {
   getIdToken: jest.fn(),
   getAuth: jest.fn(),
   removeRedirectUri: jest.fn(),
-  getExpiration: jest.fn()
+  getExpiration: jest.fn(),
+  setVerifier: jest.fn(),
+  getVerifier: jest.fn(),
+  removeVerifier: jest.fn()
 }
 
 jest.unstable_mockModule('../../src/oidc/StorageService.js', () => ({
