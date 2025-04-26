@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals'
+import { jest } from '@jest/globals'
 
 export const mockStorageService = {
   setRedirectUri: jest.fn(),
@@ -16,7 +16,7 @@ export const mockStorageService = {
   getExpiration: jest.fn(),
   setVerifier: jest.fn(),
   getVerifier: jest.fn(),
-  removeVerifier: jest.fn()
+  removeVerifier: jest.fn(),
 }
 
 jest.unstable_mockModule('../../src/oidc/StorageService.js', () => ({

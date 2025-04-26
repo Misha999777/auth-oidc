@@ -1,21 +1,21 @@
-import {afterAll, beforeAll, beforeEach, describe, expect, it, jest} from '@jest/globals'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
 
-import {mockOIDCService} from '../mocks/oidc/OIDCService.mock.js'
-import {mockStorageService} from '../mocks/oidc/StorageService.mock.js'
-import {mockConfigUtils} from '../mocks/utils/ConfigUtil.mock.js'
+import { mockOIDCService } from '../mocks/oidc/OIDCService.mock.js'
+import { mockStorageService } from '../mocks/oidc/StorageService.mock.js'
+import { mockConfigUtils } from '../mocks/utils/ConfigUtil.mock.js'
 import '../mocks/auth/BrowserService.mock.js'
 
-const {AuthService} = await import('../../src/auth/AuthService.js')
+const { AuthService } = await import('../../src/auth/AuthService.js')
 
 const oidcConfig = {
   authority: 'https://auth.com/123',
-  clientId: '123'
+  clientId: '123',
 }
 const config = {
   authority: 'https://auth.com/123',
   clientId: '123',
   autoLogin: false,
-  errorHandler: mockConfigUtils.defaultErrorHandler
+  errorHandler: mockConfigUtils.defaultErrorHandler,
 }
 
 let unit
@@ -23,8 +23,8 @@ let unit
 beforeAll(() => {
   global.window = {
     location: {
-      href: 'https://site.com/'
-    }
+      href: 'https://site.com/',
+    },
   }
 })
 
@@ -41,53 +41,53 @@ afterAll(() => {
 describe('AuthService login', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.signInRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.login()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(window.location.href)
   })
 
   it('with URL', async function () {
-    //GIVEN
-    const url = "https://app.com/page"
+    // GIVEN
+    const url = 'https://app.com/page'
     mockOIDCService.signInRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.login(url)
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(url)
   })
 
   it('with config URL', async function () {
-    //GIVEN
-    const url = "https://app.com/page"
-    mockConfigUtils.populateDefaults.mockReturnValue({...config, callbackUrl: url});
+    // GIVEN
+    const url = 'https://app.com/page'
+    mockConfigUtils.populateDefaults.mockReturnValue({ ...config, callbackUrl: url })
     unit = new AuthService(oidcConfig)
     mockOIDCService.signInRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.login()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(url)
   })
 
   it('failed', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.signInRedirect.mockRejectedValue()
 
-    //WHEN
+    // WHEN
     await unit.login()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirect).toHaveBeenCalledWith(window.location.href)
     expect(mockConfigUtils.defaultErrorHandler).toHaveBeenCalledTimes(1)
@@ -97,53 +97,53 @@ describe('AuthService login', function () {
 describe('AuthService logout', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.signOutRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.logout()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(window.location.href)
   })
 
   it('with URL', async function () {
-    //GIVEN
-    const url = "https://app.com/page"
+    // GIVEN
+    const url = 'https://app.com/page'
     mockOIDCService.signOutRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.logout(url)
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(url)
   })
 
   it('with config URL', async function () {
-    //GIVEN
-    const url = "https://app.com/page"
-    mockConfigUtils.populateDefaults.mockReturnValue({...config, callbackUrl: url});
+    // GIVEN
+    const url = 'https://app.com/page'
+    mockConfigUtils.populateDefaults.mockReturnValue({ ...config, callbackUrl: url })
     unit = new AuthService(oidcConfig)
     mockOIDCService.signOutRedirect.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.logout()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(url)
   })
 
   it('failed', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.signOutRedirect.mockRejectedValue()
 
-    //WHEN
+    // WHEN
     await unit.logout()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signOutRedirect).toHaveBeenCalledWith(window.location.href)
     expect(mockConfigUtils.defaultErrorHandler).toHaveBeenCalledTimes(1)
@@ -153,24 +153,24 @@ describe('AuthService logout', function () {
 describe('AuthService isLoggedIn', function () {
 
   it('nominal', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(true)
 
-    //WHEN
+    // WHEN
     expect(unit.isLoggedIn()).toBeTruthy()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 
   it('not logged in', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     expect(unit.isLoggedIn()).toBeFalsy()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 })
@@ -178,26 +178,26 @@ describe('AuthService isLoggedIn', function () {
 describe('AuthService getUserInfo', function () {
 
   it('nominal', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(true)
     mockStorageService.getUserClaim.mockReturnValue('info')
 
-    //WHEN
+    // WHEN
     expect(unit.getUserInfo()).toEqual('info')
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getUserClaim).toHaveBeenCalledTimes(1)
   })
 
   it('not logged in', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     expect(unit.getUserInfo.bind(unit)).toThrow(new Error('No active auth or auth is in progress'))
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 })
@@ -205,26 +205,26 @@ describe('AuthService getUserInfo', function () {
 describe('AuthService getToken', function () {
 
   it('nominal', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(true)
     mockStorageService.getAccessToken.mockReturnValue('token')
 
-    //WHEN
+    // WHEN
     expect(unit.getToken()).toEqual('token')
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getAccessToken).toHaveBeenCalledTimes(1)
   })
 
   it('not logged in', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     expect(unit.getToken.bind(unit)).toThrow(new Error('No active auth or auth is in progress'))
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 })
@@ -232,30 +232,28 @@ describe('AuthService getToken', function () {
 describe('AuthService tryToRefresh', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggedIn.mockReturnValue(true)
 
-    //WHEN
+    // WHEN
     await unit.tryToRefresh()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInSilent).toHaveBeenCalledTimes(1)
   })
 
   it('not logged in', async function () {
-    //GIVEN
+    // GIVEN
     expect.assertions(2)
     mockOIDCService.isLoggedIn.mockReturnValue(false)
 
-    //WHEN
-    try {
-      await unit.tryToRefresh()
-    } catch (e) {
-      expect(e.message).toMatch('No active auth or auth is in progress')
-    }
+    // WHEN
+    await expect(unit.tryToRefresh())
+      .rejects
+      .toThrow('No active auth or auth is in progress')
 
-    //THEN
+    // THEN
     expect(mockOIDCService.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 })

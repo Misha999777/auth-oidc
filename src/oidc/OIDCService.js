@@ -1,6 +1,6 @@
-import {ConfigurationService} from './ConfigurationService.js'
-import {ExpirationService} from './ExpirationService.js'
-import {StorageService} from './StorageService.js'
+import { ConfigurationService } from './ConfigurationService.js'
+import { ExpirationService } from './ExpirationService.js'
+import { StorageService } from './StorageService.js'
 
 export class OIDCService {
 
@@ -30,7 +30,7 @@ export class OIDCService {
     },
     refresh: async () => {
       await this.signInSilent()
-    }
+    },
   }
 
   constructor(authority, clientId) {
@@ -54,8 +54,8 @@ export class OIDCService {
       throw new Error('Cant obtain endpoint')
     }
 
-    const codeVerifier = this._generateCodeVerifier();
-    const codeChallenge = await this._generateCodeChallenge(codeVerifier);
+    const codeVerifier = this._generateCodeVerifier()
+    const codeChallenge = await this._generateCodeChallenge(codeVerifier)
 
     const parameters = [
       this._constructParam(this.CLIENT_ID_PARAMETER, this.clientId),
@@ -63,7 +63,7 @@ export class OIDCService {
       this._constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
       this._constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID),
       this._constructParam(this.CODE_CHALLENGE, codeChallenge),
-      this._constructParam(this.CHALLENGE_METHOD, this.S256)
+      this._constructParam(this.CHALLENGE_METHOD, this.S256),
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
@@ -88,8 +88,8 @@ export class OIDCService {
           grant_type: 'authorization_code',
           client_id: this.clientId,
           redirect_uri: this.storageService.getRedirectUri(),
-          code_verifier: this.storageService.getVerifier()
-        })
+          code_verifier: this.storageService.getVerifier(),
+        }),
       })
 
     const json = await response.json()
@@ -118,8 +118,8 @@ export class OIDCService {
         body: new URLSearchParams({
           refresh_token: this.storageService.getRefreshToken(),
           grant_type: 'refresh_token',
-          client_id: this.clientId
-        })
+          client_id: this.clientId,
+        }),
       })
 
     const json = await response.json()
@@ -145,7 +145,7 @@ export class OIDCService {
 
     const parameters = [
       this._constructParam(this.POST_LOGOUT_REDIRECT_URI_PARAMETER, encodeURIComponent(redirectUri)),
-      this._constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, this.storageService.getIdToken())
+      this._constructParam(this.ID_TOKEN_HINT_URI_PARAMETER, this.storageService.getIdToken()),
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
@@ -178,7 +178,7 @@ export class OIDCService {
     const response = await fetch(endpoint,
       {
         method: 'GET',
-        headers: [['Authorization', 'Bearer ' + this.storageService.getAccessToken()]]
+        headers: [['Authorization', 'Bearer ' + this.storageService.getAccessToken()]],
       })
 
     const json = await response.json()
@@ -191,22 +191,22 @@ export class OIDCService {
   }
 
   _generateCodeVerifier() {
-    const randomBytes = window.crypto.getRandomValues(new Uint8Array(64));
-    return this._base64UrlEncode(randomBytes.buffer);
+    const randomBytes = window.crypto.getRandomValues(new Uint8Array(64))
+    return this._base64UrlEncode(randomBytes.buffer)
   }
 
   async _generateCodeChallenge(codeVerifier) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(codeVerifier);
-    const digest = await crypto.subtle.digest('SHA-256', data);
-    return this._base64UrlEncode(digest);
+    const encoder = new TextEncoder()
+    const data = encoder.encode(codeVerifier)
+    const digest = await crypto.subtle.digest('SHA-256', data)
+    return this._base64UrlEncode(digest)
   }
 
   _base64UrlEncode(arrayBuffer) {
     return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
-      .replace(/=+$/, '');
+      .replace(/=+$/, '')
   }
 
   _constructParam(name, value) {

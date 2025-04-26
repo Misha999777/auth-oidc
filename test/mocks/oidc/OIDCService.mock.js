@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals'
+import { jest } from '@jest/globals'
 
 export const mockOIDCService = {
   signInRedirect: jest.fn(),
@@ -7,7 +7,7 @@ export const mockOIDCService = {
   signOutRedirect: jest.fn(),
   isLoggedIn: jest.fn(),
   isLoggingIn: jest.fn(),
-  cancelLogin: jest.fn()
+  cancelLogin: jest.fn(),
 }
 
 jest.unstable_mockModule('../../src/oidc/OIDCService.js', () => ({

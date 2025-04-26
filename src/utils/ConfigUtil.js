@@ -2,7 +2,7 @@ export function populateDefaults(config) {
   return {
     ...config,
     autoLogin: config.autoLogin ?? false,
-    errorHandler: config.errorHandler ?? defaultErrorHandler
+    errorHandler: config.errorHandler ?? defaultErrorHandler,
   }
 }
 

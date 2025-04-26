@@ -1,7 +1,7 @@
-import {jest} from '@jest/globals'
+import { jest } from '@jest/globals'
 
 export const mockBrowserService = {
-  pageLoaded: jest.fn()
+  pageLoaded: jest.fn(),
 }
 
 jest.unstable_mockModule('../../src/auth/BrowserService.js', () => ({

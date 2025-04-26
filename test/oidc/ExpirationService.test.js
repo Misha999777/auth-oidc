@@ -1,6 +1,6 @@
-import {jest, describe, it, expect, afterAll, beforeEach, beforeAll} from '@jest/globals'
-import {mockWatcherActions} from '../mocks/oidc/WatcherActions.mock.js'
-import {ExpirationService} from '../../src/oidc/ExpirationService.js'
+import { jest, describe, it, expect, afterAll, beforeEach, beforeAll } from '@jest/globals'
+import { mockWatcherActions } from '../mocks/oidc/WatcherActions.mock.js'
+import { ExpirationService } from '../../src/oidc/ExpirationService.js'
 
 let unit
 
@@ -20,7 +20,7 @@ afterAll(() => {
 describe('ExpirationService constructor', function () {
 
   it('nominal', function () {
-    //WHEN -> THEN
+    // WHEN -> THEN
     expect(unit.actions)
       .toEqual(mockWatcherActions)
   })
@@ -29,13 +29,13 @@ describe('ExpirationService constructor', function () {
 describe('ExpirationService watchExpiration', function () {
 
   it('nominal', function () {
-    //GIVEN
+    // GIVEN
     unit._checkExpiration = jest.fn()
 
-    //WHEN
+    // WHEN
     unit.watchExpiration()
 
-    //THEN
+    // THEN
     expect(unit._checkExpiration).toHaveBeenCalledTimes(1)
     expect(setInterval).toHaveBeenCalledTimes(1)
     expect(setInterval).toHaveBeenCalledWith(unit._checkExpiration, 5000)
@@ -45,14 +45,14 @@ describe('ExpirationService watchExpiration', function () {
 describe('ExpirationService _checkExpiration', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockWatcherActions.checkExpiration.mockReturnValue(true)
     mockWatcherActions.refresh.mockResolvedValue({})
 
-    //WHEN
+    // WHEN
     await unit._checkExpiration()
 
-    //THEN
+    // THEN
     expect(unit.actions.reload).toBeDefined()
     expect(mockWatcherActions.checkExpiration).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.refresh).toHaveBeenCalledTimes(1)
@@ -60,55 +60,55 @@ describe('ExpirationService _checkExpiration', function () {
   })
 
   it('not expired', async function () {
-    //GIVEN
+    // GIVEN
     mockWatcherActions.checkExpiration.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     await unit._checkExpiration()
 
-    //THEN
+    // THEN
     expect(unit.actions.reload).toBeUndefined()
     expect(mockWatcherActions.checkExpiration).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.refresh).toHaveBeenCalledTimes(0)
   })
 
   it('already reloaded', async function () {
-    //GIVEN
+    // GIVEN
     mockWatcherActions.checkExpiration.mockReturnValue(true)
     mockWatcherActions.refresh.mockResolvedValue()
     unit.actions.reload = undefined
 
-    //WHEN
+    // WHEN
     await unit._checkExpiration()
 
-    //THEN
+    // THEN
     expect(mockWatcherActions.checkExpiration).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.refresh).toHaveBeenCalledTimes(1)
   })
 
   it('failed to fetch', async function () {
-    //GIVEN
+    // GIVEN
     mockWatcherActions.checkExpiration.mockReturnValue(true)
-    mockWatcherActions.refresh.mockRejectedValue({message: 'Failed to fetch'})
+    mockWatcherActions.refresh.mockRejectedValue({ message: 'Failed to fetch' })
 
-    //WHEN
+    // WHEN
     await unit._checkExpiration()
 
-    //THEN
+    // THEN
     expect(mockWatcherActions.checkExpiration).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.refresh).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.forgetSession).toHaveBeenCalledTimes(0)
   })
 
   it('unable to refresh', async function () {
-    //GIVEN
+    // GIVEN
     mockWatcherActions.checkExpiration.mockReturnValue(true)
-    mockWatcherActions.refresh.mockRejectedValue({message: ':)'})
+    mockWatcherActions.refresh.mockRejectedValue({ message: ':)' })
 
-    //WHEN
+    // WHEN
     await unit._checkExpiration()
 
-    //THEN
+    // THEN
     expect(mockWatcherActions.checkExpiration).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.refresh).toHaveBeenCalledTimes(1)
     expect(mockWatcherActions.forgetSession).toHaveBeenCalledTimes(1)

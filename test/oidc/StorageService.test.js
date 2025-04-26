@@ -1,7 +1,7 @@
-import {jest, describe, it, expect, afterAll, beforeEach, beforeAll} from '@jest/globals'
+import { jest, describe, it, expect, afterAll, beforeEach, beforeAll } from '@jest/globals'
 
-import {mockLocalStorage} from '../mocks/LocalStorage.mock.js'
-import {StorageService} from '../../src/oidc/StorageService.js'
+import { mockLocalStorage } from '../mocks/LocalStorage.mock.js'
+import { StorageService } from '../../src/oidc/StorageService.js'
 
 const redirectUri = 'https://app.com/'
 const verifier = 'abc'
@@ -10,7 +10,7 @@ const auth = {
   refresh_token: 'refresh_token',
   id_token: 'id-token',
   expires_at: 123,
-  user_info: {roles: ['ROLE_ADMIN']}
+  user_info: { roles: ['ROLE_ADMIN'] },
 }
 
 let unit
@@ -31,178 +31,178 @@ afterAll(() => {
 describe('StorageService', function () {
 
   it('setAuth', function () {
-    //WHEN
+    // WHEN
     unit.setAuth(auth)
 
-    //THEN
+    // THEN
     expect(localStorage.setItem).toHaveBeenCalledTimes(1)
     expect(localStorage.setItem).toHaveBeenCalledWith(unit.AUTH, JSON.stringify(auth))
   })
 
   it('setUserInfo', function () {
-    //GIVEN
-    const newUserInfo = {roles: ['ROLE_STUDENT']}
-    const expectedAuth = {...auth, user_info: newUserInfo}
+    // GIVEN
+    const newUserInfo = { roles: ['ROLE_STUDENT'] }
+    const expectedAuth = { ...auth, user_info: newUserInfo }
 
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     unit.setUserInfo(newUserInfo)
 
-    //THEN
+    // THEN
     expect(localStorage.setItem).toHaveBeenCalledTimes(1)
     expect(localStorage.setItem).toHaveBeenCalledWith(unit.AUTH, JSON.stringify(expectedAuth))
   })
 
   it('getAuth', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getAuth()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getUserInfo', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getUserInfo()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.user_info)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getUserClaim', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getUserClaim('roles')
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.user_info.roles)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getExpiration', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getExpiration()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.expires_at)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getIdToken', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getIdToken()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.id_token)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getAccessToken', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getAccessToken()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.access_token)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('getRefreshToken', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(JSON.stringify(auth))
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getRefreshToken()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(auth.refresh_token)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('removeAuth', function () {
-    //WHEN
+    // WHEN
     unit.removeAuth()
 
-    //THEN
+    // THEN
     expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
     expect(localStorage.removeItem).toHaveBeenCalledWith(unit.AUTH)
   })
 
   it('setRedirectUri', function () {
-    //WHEN
+    // WHEN
     unit.setRedirectUri(redirectUri)
 
-    //THEN
+    // THEN
     expect(localStorage.setItem).toHaveBeenCalledTimes(1)
     expect(localStorage.setItem).toHaveBeenCalledWith(unit.ACTIVE_REDIRECT_URI, redirectUri)
   })
 
   it('getRedirectUri', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(redirectUri)
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getRedirectUri()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(redirectUri)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('removeRedirectUri', function () {
-    //WHEN
+    // WHEN
     unit.removeRedirectUri()
 
-    //THEN
+    // THEN
     expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
     expect(localStorage.removeItem).toHaveBeenCalledWith(unit.ACTIVE_REDIRECT_URI)
   })
 
   it('setVerifier', function () {
-    //WHEN
+    // WHEN
     unit.setVerifier(verifier)
 
-    //THEN
+    // THEN
     expect(localStorage.setItem).toHaveBeenCalledTimes(1)
     expect(localStorage.setItem).toHaveBeenCalledWith(unit.VERIFIER, verifier)
   })
 
   it('getVerifier', function () {
-    //GIVEN
+    // GIVEN
     localStorage.getItem.mockReturnValue(verifier)
 
-    //WHEN
+    // WHEN
     const actualResult = unit.getVerifier()
 
-    //THEN
+    // THEN
     expect(actualResult).toEqual(verifier)
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
   })
 
   it('removeVerifier', function () {
-    //WHEN
+    // WHEN
     unit.removeVerifier()
 
-    //THEN
+    // THEN
     expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
     expect(localStorage.removeItem).toHaveBeenCalledWith(unit.VERIFIER)
   })

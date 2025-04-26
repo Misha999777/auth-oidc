@@ -17,7 +17,7 @@ export class ExpirationService {
 
     return this.actions.refresh()
       .then(() => this.actions.reload && this.actions.reload())
-      .catch(e => {
+      .catch((e) => {
         if (e.message !== 'Failed to fetch') {
           this.actions.forgetSession()
         }

@@ -1,11 +1,11 @@
-import {jest, describe, it, expect, beforeAll, beforeEach, afterAll} from '@jest/globals'
+import { jest, describe, it, expect, beforeAll, beforeEach, afterAll } from '@jest/globals'
 
-import {mockJson, mockFetch} from '../mocks/Fetch.mock.js'
-import {mockConfigurationService} from '../mocks/oidc/ConfigurationService.mock.js'
-import {mockStorageService} from '../mocks/oidc/StorageService.mock.js'
+import { mockJson, mockFetch } from '../mocks/Fetch.mock.js'
+import { mockConfigurationService } from '../mocks/oidc/ConfigurationService.mock.js'
+import { mockStorageService } from '../mocks/oidc/StorageService.mock.js'
 import '../mocks/oidc/ExpirationService.mock.js'
 
-const {OIDCService} = await import('../../src/oidc/OIDCService.js')
+const { OIDCService } = await import('../../src/oidc/OIDCService.js')
 
 const authorityUrl = 'https://server.com/project'
 const authUrl = authorityUrl + '/auth'
@@ -26,7 +26,7 @@ let unit
 beforeAll(() => {
   jest.useFakeTimers()
   global.setInterval = jest.fn()
-  global.window = {location: {replace: jest.fn(), reload: jest.fn()}, crypto: {getRandomValues: jest.fn()}}
+  global.window = { location: { replace: jest.fn(), reload: jest.fn() }, crypto: { getRandomValues: jest.fn() } }
   global.fetch = mockFetch
 })
 
@@ -45,17 +45,17 @@ afterAll(() => {
 describe('ConfigurationService signInRedirect', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     const expectedAuthUri = authUrl + '?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri)
       + '&response_type=code&scope=openid' + '&code_challenge=' + challenge + '&code_challenge_method=S256'
 
     mockConfigurationService.getAuthEndpoint.mockReturnValue(authUrl)
     window.crypto.getRandomValues.mockImplementation(() => new Uint8Array([1, 2, 3, 4]))
 
-    //WHEN
+    // WHEN
     await unit.signInRedirect(redirectUri)
 
-    //THEN
+    // THEN
     expect(mockConfigurationService.getAuthEndpoint).toHaveBeenCalledTimes(1)
 
     expect(window.crypto.getRandomValues).toHaveBeenCalledTimes(1)
@@ -75,7 +75,7 @@ describe('ConfigurationService signInRedirect', function () {
 describe('ConfigurationService signInRedirectCallback', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     const expectedAuthFetchParams = {
       method: 'POST',
       body: new URLSearchParams({
@@ -83,11 +83,11 @@ describe('ConfigurationService signInRedirectCallback', function () {
         grant_type: 'authorization_code',
         client_id: clientId,
         redirect_uri: redirectUri,
-        code_verifier: verifier
-      })
+        code_verifier: verifier,
+      }),
     }
-    const serverAuth = {expires_in: 10}
-    const expectedAuth = {...serverAuth, expires_at: Date.now() + serverAuth.expires_in * 1000}
+    const serverAuth = { expires_in: 10 }
+    const expectedAuth = { ...serverAuth, expires_at: Date.now() + serverAuth.expires_in * 1000 }
 
     mockConfigurationService.getTokenEndpoint.mockReturnValue(tokenUrl)
     mockStorageService.getRedirectUri.mockReturnValue(redirectUri)
@@ -96,10 +96,10 @@ describe('ConfigurationService signInRedirectCallback', function () {
 
     unit._getUserInfo = jest.fn()
 
-    //WHEN
+    // WHEN
     await unit.signInRedirectCallback(code)
 
-    //THEN
+    // THEN
     expect(mockConfigurationService.getTokenEndpoint).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getRedirectUri).toHaveBeenCalledTimes(1)
     expect(mockFetch).toHaveBeenCalledTimes(1)
@@ -115,21 +115,21 @@ describe('ConfigurationService signInRedirectCallback', function () {
 describe('ConfigurationService signInSilent', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     const expectedRefreshFetchParams = {
       method: 'POST',
       body: new URLSearchParams({
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
-        client_id: clientId
-      })
+        client_id: clientId,
+      }),
     }
-    const serverAuth = {expires_in: 10}
-    const oldUserInfo = {name: 'user'}
+    const serverAuth = { expires_in: 10 }
+    const oldUserInfo = { name: 'user' }
     const expectedAuth = {
       ...serverAuth,
       expires_at: Date.now() + serverAuth.expires_in * 1000,
-      userInfo: oldUserInfo
+      userInfo: oldUserInfo,
     }
 
     mockConfigurationService.getTokenEndpoint.mockReturnValue(tokenUrl)
@@ -139,10 +139,10 @@ describe('ConfigurationService signInSilent', function () {
 
     unit._getUserInfo = jest.fn()
 
-    //WHEN
+    // WHEN
     await unit.signInSilent()
 
-    //THEN
+    // THEN
     expect(mockConfigurationService.getTokenEndpoint).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getRefreshToken).toHaveBeenCalledTimes(1)
     expect(mockFetch).toHaveBeenCalledTimes(1)
@@ -158,16 +158,16 @@ describe('ConfigurationService signInSilent', function () {
 describe('ConfigurationService signOutRedirect', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     const expectedLogoutUri = logoutUrl + '?post_logout_redirect_uri=' + encodeURIComponent(redirectUri)
       + '&id_token_hint=' + idToken
     mockConfigurationService.getLogoutEndpoint.mockReturnValue(logoutUrl)
     mockStorageService.getIdToken.mockReturnValue(idToken)
 
-    //WHEN
+    // WHEN
     await unit.signOutRedirect(redirectUri)
 
-    //THEN
+    // THEN
     expect(mockConfigurationService.getLogoutEndpoint).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getIdToken).toHaveBeenCalledTimes(1)
 
@@ -181,21 +181,21 @@ describe('ConfigurationService signOutRedirect', function () {
 describe('ConfigurationService _getUserInfo', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     const expectedUserInfoFetchParams = {
       method: 'GET',
-      headers: [['Authorization', 'Bearer ' + accessToken]]
+      headers: [['Authorization', 'Bearer ' + accessToken]],
     }
-    const serverUserInfo = {sub: 'user'}
+    const serverUserInfo = { sub: 'user' }
 
     mockConfigurationService.getUserInfoEndpoint.mockReturnValue(userInfoUrl)
     mockStorageService.getAccessToken.mockReturnValue(accessToken)
     mockJson.mockResolvedValueOnce(serverUserInfo)
 
-    //WHEN
+    // WHEN
     await unit._getUserInfo()
 
-    //THEN
+    // THEN
     expect(mockConfigurationService.getUserInfoEndpoint).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getAccessToken).toHaveBeenCalledTimes(1)
     expect(mockFetch).toHaveBeenCalledTimes(1)
@@ -209,43 +209,43 @@ describe('ConfigurationService _getUserInfo', function () {
 describe('ConfigurationService isLoggedIn', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockStorageService.getAuth.mockReturnValue({})
     mockStorageService.getUserInfo.mockReturnValue({})
 
-    //WHEN
+    // WHEN
     expect(await unit.isLoggedIn())
       .toBeTruthy()
 
-    //THEN
+    // THEN
     expect(mockStorageService.getAuth).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getUserInfo).toHaveBeenCalledTimes(1)
   })
 
   it('no user info', async function () {
-    //GIVEN
+    // GIVEN
     mockStorageService.getAuth.mockReturnValue({})
     mockStorageService.getUserInfo.mockReturnValue(undefined)
 
-    //WHEN
+    // WHEN
     expect(await unit.isLoggedIn())
       .toBeFalsy()
 
-    //THEN
+    // THEN
     expect(mockStorageService.getAuth).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getUserInfo).toHaveBeenCalledTimes(1)
   })
 
   it('no auth', async function () {
-    //GIVEN
+    // GIVEN
     mockStorageService.getAuth.mockReturnValue(undefined)
     mockStorageService.getUserInfo.mockReturnValue({})
 
-    //WHEN
+    // WHEN
     expect(await unit.isLoggedIn())
       .toBeFalsy()
 
-    //THEN
+    // THEN
     expect(mockStorageService.getAuth).toHaveBeenCalledTimes(1)
   })
 })
@@ -253,26 +253,26 @@ describe('ConfigurationService isLoggedIn', function () {
 describe('ConfigurationService isLoggingIn', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     mockStorageService.getRedirectUri.mockReturnValue('123')
 
-    //WHEN
+    // WHEN
     expect(await unit.isLoggingIn())
       .toBeTruthy()
 
-    //THEN
+    // THEN
     expect(mockStorageService.getRedirectUri).toHaveBeenCalledTimes(1)
   })
 
   it('no redirect uri', async function () {
-    //GIVEN
+    // GIVEN
     mockStorageService.getRedirectUri.mockReturnValue(undefined)
 
-    //WHEN
+    // WHEN
     expect(await unit.isLoggingIn())
       .toBeFalsy()
 
-    //THEN
+    // THEN
     expect(mockStorageService.getRedirectUri).toHaveBeenCalledTimes(1)
   })
 })
@@ -280,10 +280,10 @@ describe('ConfigurationService isLoggingIn', function () {
 describe('ConfigurationService cancelLogin', function () {
 
   it('nominal', async function () {
-    //WHEN
+    // WHEN
     await unit.cancelLogin()
 
-    //THEN
+    // THEN
     expect(mockStorageService.removeRedirectUri).toHaveBeenCalledTimes(1)
   })
 })
@@ -291,45 +291,45 @@ describe('ConfigurationService cancelLogin', function () {
 describe('WATCHER_ACTIONS checkExpiration', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     unit.isLoggedIn = jest.fn()
     unit.isLoggedIn.mockReturnValue(true)
     mockStorageService.getExpiration.mockReturnValue(Date.now())
 
-    //WHEN
+    // WHEN
     expect(await unit.WATCHER_ACTIONS.checkExpiration())
       .toBeTruthy()
 
-    //THEN
+    // THEN
     expect(unit.isLoggedIn).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getExpiration).toHaveBeenCalledTimes(1)
   })
 
   it('not expired', async function () {
-    //GIVEN
+    // GIVEN
     unit.isLoggedIn = jest.fn()
     unit.isLoggedIn.mockReturnValue(true)
     mockStorageService.getExpiration.mockReturnValue(Date.now() + 30000)
 
-    //WHEN
+    // WHEN
     expect(await unit.WATCHER_ACTIONS.checkExpiration())
       .toBeFalsy()
 
-    //THEN
+    // THEN
     expect(unit.isLoggedIn).toHaveBeenCalledTimes(1)
     expect(mockStorageService.getExpiration).toHaveBeenCalledTimes(1)
   })
 
   it('not logged in', async function () {
-    //GIVEN
+    // GIVEN
     unit.isLoggedIn = jest.fn()
     unit.isLoggedIn.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     expect(await unit.WATCHER_ACTIONS.checkExpiration())
       .toBeFalsy()
 
-    //THEN
+    // THEN
     expect(unit.isLoggedIn).toHaveBeenCalledTimes(1)
   })
 })
@@ -337,10 +337,10 @@ describe('WATCHER_ACTIONS checkExpiration', function () {
 describe('WATCHER_ACTIONS forgetSession', function () {
 
   it('nominal', async function () {
-    //WHEN
+    // WHEN
     await unit.WATCHER_ACTIONS.forgetSession()
 
-    //THEN
+    // THEN
     expect(mockStorageService.removeAuth).toHaveBeenCalledTimes(1)
     expect(window.location.reload).toHaveBeenCalledTimes(1)
   })
@@ -349,10 +349,10 @@ describe('WATCHER_ACTIONS forgetSession', function () {
 describe('WATCHER_ACTIONS reload', function () {
 
   it('nominal', async function () {
-    //WHEN
+    // WHEN
     await unit.WATCHER_ACTIONS.reload()
 
-    //THEN
+    // THEN
     expect(window.location.reload).toHaveBeenCalledTimes(1)
   })
 })
@@ -360,13 +360,13 @@ describe('WATCHER_ACTIONS reload', function () {
 describe('WATCHER_ACTIONS refresh', function () {
 
   it('nominal', async function () {
-    //GIVEN
+    // GIVEN
     unit.signInSilent = jest.fn()
 
-    //WHEN
+    // WHEN
     await unit.WATCHER_ACTIONS.refresh()
 
-    //THEN
+    // THEN
     expect(unit.signInSilent).toHaveBeenCalledTimes(1)
   })
 })

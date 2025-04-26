@@ -1,9 +1,9 @@
-import {afterAll, beforeAll, beforeEach, describe, expect, it, jest} from '@jest/globals'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
 
-import {mockOIDCService} from '../mocks/oidc/OIDCService.mock.js'
-import {mockConfigUtils} from '../mocks/utils/ConfigUtil.mock.js'
+import { mockOIDCService } from '../mocks/oidc/OIDCService.mock.js'
+import { mockConfigUtils } from '../mocks/utils/ConfigUtil.mock.js'
 
-const {BrowserService} = await import('../../src/auth/BrowserService.js')
+const { BrowserService } = await import('../../src/auth/BrowserService.js')
 
 let isLoggedIn = jest.fn()
 let login = jest.fn()
@@ -13,11 +13,11 @@ let unit
 beforeAll(() => {
   global.window = {
     location: {
-      href: 'https://site.com/'
+      href: 'https://site.com/',
     },
     history: {
-      replaceState: jest.fn()
-    }
+      replaceState: jest.fn(),
+    },
   }
 })
 
@@ -33,26 +33,26 @@ afterAll(() => {
 describe('BrowserService pageLoaded', function () {
 
   it('nominal', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggingIn.mockReturnValue(false)
     isLoggedIn.mockReturnValue(false)
 
-    //WHEN
+    // WHEN
     unit.pageLoaded()
 
-    //THEN
+    // THEN
     expect(login).toHaveBeenCalledTimes(1)
   })
 
   it('failed', function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggingIn.mockReturnValue(true)
     window.location.href = 'https://site.com?error=123&error_description=123'
 
-    //WHEN
+    // WHEN
     unit.pageLoaded()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.cancelLogin).toHaveBeenCalledTimes(1)
     expect(window.history.replaceState).toHaveBeenCalledTimes(1)
     expect(window.history.replaceState).toHaveBeenCalledWith({}, '', 'https://site.com/')
@@ -60,16 +60,16 @@ describe('BrowserService pageLoaded', function () {
   })
 
   it('code', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggingIn.mockReturnValue(true)
     window.location.href = 'https://site.com?code=123'
 
     mockOIDCService.signInRedirectCallback.mockResolvedValue()
 
-    //WHEN
+    // WHEN
     await unit.pageLoaded()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirectCallback).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirectCallback).toHaveBeenCalledWith('123')
     expect(mockOIDCService.cancelLogin).toHaveBeenCalledTimes(1)
@@ -77,16 +77,16 @@ describe('BrowserService pageLoaded', function () {
   })
 
   it('code failed', async function () {
-    //GIVEN
+    // GIVEN
     mockOIDCService.isLoggingIn.mockReturnValue(true)
     window.location.href = 'https://site.com?code=123'
 
     mockOIDCService.signInRedirectCallback.mockRejectedValue()
 
-    //WHEN
+    // WHEN
     await unit.pageLoaded()
 
-    //THEN
+    // THEN
     expect(mockOIDCService.signInRedirectCallback).toHaveBeenCalledTimes(1)
     expect(mockOIDCService.signInRedirectCallback).toHaveBeenCalledWith('123')
     expect(mockOIDCService.cancelLogin).toHaveBeenCalledTimes(1)

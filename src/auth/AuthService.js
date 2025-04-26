@@ -1,7 +1,7 @@
-import {populateDefaults} from '../utils/ConfigUtil.js'
-import {OIDCService} from '../oidc/OIDCService.js'
-import {StorageService} from '../oidc/StorageService.js'
-import {BrowserService} from './BrowserService.js'
+import { populateDefaults } from '../utils/ConfigUtil.js'
+import { OIDCService } from '../oidc/OIDCService.js'
+import { StorageService } from '../oidc/StorageService.js'
+import { BrowserService } from './BrowserService.js'
 
 export class AuthService {
 
