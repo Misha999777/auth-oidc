@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockWatcherActions = {
-  checkExpiration: jest.fn(),
-  reload: jest.fn(),
-  refresh: jest.fn(),
-  forgetSession: jest.fn(),
+  checkExpiration: vi.fn(),
+  reload: vi.fn(),
+  refresh: vi.fn(),
+  forgetSession: vi.fn(),
 }

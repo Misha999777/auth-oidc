@@ -1,7 +1,7 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import stylistic from '@stylistic/eslint-plugin'
-import jest from 'eslint-plugin-jest'
+import vitest from '@vitest/eslint-plugin'
 
 export default [
   {
@@ -16,13 +16,13 @@ export default [
 
     plugins: {
       js,
-      jest,
+      vitest,
       '@stylistic': stylistic,
     },
 
     rules: {
       ...js.configs.recommended.rules,
-      ...jest.configs.recommended.rules,
+      ...vitest.configs.recommended.rules,
       ...stylistic.configs.recommended.rules,
 
       '@stylistic/padded-blocks': 'off',

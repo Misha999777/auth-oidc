@@ -1,16 +1,16 @@
-import { jest, describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals'
+import { vi, describe, it, expect, beforeEach, beforeAll, afterAll } from 'vitest'
 import { defaultErrorHandler, populateDefaults } from '../../src/utils/ConfigUtil.js'
 
 beforeAll(() => {
-  jest.spyOn(global.console, 'log')
+  vi.spyOn(global.console, 'log').mockImplementation(() => {})
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {
-  jest.restoreAllMocks()
+  vi.restoreAllMocks()
 })
 
 describe('PopulateDefaults', function () {

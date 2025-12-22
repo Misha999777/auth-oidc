@@ -1,12 +1,14 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockConfigurationService = {
-  getAuthEndpoint: jest.fn(),
-  getTokenEndpoint: jest.fn(),
-  getUserInfoEndpoint: jest.fn(),
-  getLogoutEndpoint: jest.fn(),
+  getAuthEndpoint: vi.fn(),
+  getTokenEndpoint: vi.fn(),
+  getUserInfoEndpoint: vi.fn(),
+  getLogoutEndpoint: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/oidc/ConfigurationService.js', () => ({
-  ConfigurationService: jest.fn().mockImplementation(() => mockConfigurationService),
+vi.mock(import('../../../src/oidc/ConfigurationService.js'), () => ({
+  ConfigurationService: vi.fn(function () {
+    return mockConfigurationService
+  }),
 }))

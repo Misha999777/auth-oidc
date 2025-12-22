@@ -1,24 +1,26 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockStorageService = {
-  setRedirectUri: jest.fn(),
-  getRedirectUri: jest.fn(),
-  setAuth: jest.fn(),
-  getAccessToken: jest.fn(),
-  setUserInfo: jest.fn(),
-  getRefreshToken: jest.fn(),
-  getUserInfo: jest.fn(),
-  getUserClaim: jest.fn(),
-  removeAuth: jest.fn(),
-  getIdToken: jest.fn(),
-  getAuth: jest.fn(),
-  removeRedirectUri: jest.fn(),
-  getExpiration: jest.fn(),
-  setVerifier: jest.fn(),
-  getVerifier: jest.fn(),
-  removeVerifier: jest.fn(),
+  setRedirectUri: vi.fn(),
+  getRedirectUri: vi.fn(),
+  setAuth: vi.fn(),
+  getAccessToken: vi.fn(),
+  setUserInfo: vi.fn(),
+  getRefreshToken: vi.fn(),
+  getUserInfo: vi.fn(),
+  getUserClaim: vi.fn(),
+  removeAuth: vi.fn(),
+  getIdToken: vi.fn(),
+  getAuth: vi.fn(),
+  removeRedirectUri: vi.fn(),
+  getExpiration: vi.fn(),
+  setVerifier: vi.fn(),
+  getVerifier: vi.fn(),
+  removeVerifier: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/oidc/StorageService.js', () => ({
-  StorageService: jest.fn().mockImplementation(() => mockStorageService),
+vi.mock(import('../../../src/oidc/StorageService.js'), () => ({
+  StorageService: vi.fn(function () {
+    return mockStorageService
+  }),
 }))

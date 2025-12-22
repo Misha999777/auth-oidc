@@ -1,16 +1,16 @@
-import { jest, describe, it, expect, afterAll, beforeEach, beforeAll } from '@jest/globals'
+import { vi, describe, it, expect, afterAll, beforeEach, beforeAll } from 'vitest'
 import { mockWatcherActions } from '../mocks/oidc/WatcherActions.mock.js'
 import { ExpirationService } from '../../src/oidc/ExpirationService.js'
 
 let unit
 
 beforeAll(() => {
-  global.setInterval = jest.fn()
+  global.setInterval = vi.fn()
 })
 
 beforeEach(() => {
   unit = new ExpirationService(mockWatcherActions)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {
@@ -30,7 +30,7 @@ describe('ExpirationService watchExpiration', function () {
 
   it('nominal', function () {
     // GIVEN
-    unit._checkExpiration = jest.fn()
+    unit._checkExpiration = vi.fn()
 
     // WHEN
     unit.watchExpiration()

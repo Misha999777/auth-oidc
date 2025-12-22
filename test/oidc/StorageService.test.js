@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, afterAll, beforeEach, beforeAll } from '@jest/globals'
+import { vi, describe, it, expect, afterAll, beforeEach, beforeAll } from 'vitest'
 
 import { mockLocalStorage } from '../mocks/LocalStorage.mock.js'
 import { StorageService } from '../../src/oidc/StorageService.js'
@@ -21,7 +21,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   unit = new StorageService()
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {

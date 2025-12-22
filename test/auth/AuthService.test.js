@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { mockOIDCService } from '../mocks/oidc/OIDCService.mock.js'
 import { mockStorageService } from '../mocks/oidc/StorageService.mock.js'
@@ -31,7 +31,7 @@ beforeAll(() => {
 beforeEach(() => {
   mockConfigUtils.populateDefaults.mockReturnValue(config)
   unit = new AuthService(oidcConfig)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {

@@ -1,7 +1,7 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockLocalStorage = {
-  setItem: jest.fn(),
-  getItem: jest.fn(),
-  removeItem: jest.fn(),
+  setItem: vi.fn(),
+  getItem: vi.fn(),
+  removeItem: vi.fn(),
 }

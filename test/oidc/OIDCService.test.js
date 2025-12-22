@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, beforeAll, beforeEach, afterAll } from '@jest/globals'
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest'
 
 import { mockJson, mockFetch } from '../mocks/Fetch.mock.js'
 import { mockConfigurationService } from '../mocks/oidc/ConfigurationService.mock.js'
@@ -24,19 +24,19 @@ const verifier = 'AQIDBA'
 let unit
 
 beforeAll(() => {
-  jest.useFakeTimers()
-  global.setInterval = jest.fn()
-  global.window = { location: { replace: jest.fn(), reload: jest.fn() }, crypto: { getRandomValues: jest.fn() } }
+  vi.useFakeTimers()
+  global.setInterval = vi.fn()
+  global.window = { location: { replace: vi.fn(), reload: vi.fn() }, crypto: { getRandomValues: vi.fn() } }
   global.fetch = mockFetch
 })
 
 beforeEach(() => {
   unit = new OIDCService(authorityUrl, clientId)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {
-  jest.useRealTimers()
+  vi.useRealTimers()
   delete global.setInterval
   delete global.window
   delete global.fetch
@@ -94,7 +94,7 @@ describe('ConfigurationService signInRedirectCallback', function () {
     mockStorageService.getVerifier.mockReturnValue(verifier)
     mockJson.mockResolvedValueOnce(serverAuth)
 
-    unit._getUserInfo = jest.fn()
+    unit._getUserInfo = vi.fn()
 
     // WHEN
     await unit.signInRedirectCallback(code)
@@ -137,7 +137,7 @@ describe('ConfigurationService signInSilent', function () {
     mockJson.mockResolvedValueOnce(serverAuth)
     mockStorageService.getUserInfo.mockReturnValue(oldUserInfo)
 
-    unit._getUserInfo = jest.fn()
+    unit._getUserInfo = vi.fn()
 
     // WHEN
     await unit.signInSilent()
@@ -292,7 +292,7 @@ describe('WATCHER_ACTIONS checkExpiration', function () {
 
   it('nominal', async function () {
     // GIVEN
-    unit.isLoggedIn = jest.fn()
+    unit.isLoggedIn = vi.fn()
     unit.isLoggedIn.mockReturnValue(true)
     mockStorageService.getExpiration.mockReturnValue(Date.now())
 
@@ -307,7 +307,7 @@ describe('WATCHER_ACTIONS checkExpiration', function () {
 
   it('not expired', async function () {
     // GIVEN
-    unit.isLoggedIn = jest.fn()
+    unit.isLoggedIn = vi.fn()
     unit.isLoggedIn.mockReturnValue(true)
     mockStorageService.getExpiration.mockReturnValue(Date.now() + 30000)
 
@@ -322,7 +322,7 @@ describe('WATCHER_ACTIONS checkExpiration', function () {
 
   it('not logged in', async function () {
     // GIVEN
-    unit.isLoggedIn = jest.fn()
+    unit.isLoggedIn = vi.fn()
     unit.isLoggedIn.mockReturnValue(false)
 
     // WHEN
@@ -361,7 +361,7 @@ describe('WATCHER_ACTIONS refresh', function () {
 
   it('nominal', async function () {
     // GIVEN
-    unit.signInSilent = jest.fn()
+    unit.signInSilent = vi.fn()
 
     // WHEN
     await unit.WATCHER_ACTIONS.refresh()

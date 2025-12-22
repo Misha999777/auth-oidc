@@ -1,9 +1,11 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockBrowserService = {
-  pageLoaded: jest.fn(),
+  pageLoaded: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/auth/BrowserService.js', () => ({
-  BrowserService: jest.fn().mockImplementation(() => mockBrowserService),
+vi.mock(import('../../../src/auth/BrowserService.js'), () => ({
+  BrowserService: vi.fn(function () {
+    return mockBrowserService
+  }),
 }))

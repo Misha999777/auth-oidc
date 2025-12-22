@@ -1,9 +1,11 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockExpirationService = {
-  watchExpiration: jest.fn(),
+  watchExpiration: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/oidc/ExpirationService.js', () => ({
-  ExpirationService: jest.fn().mockImplementation(() => mockExpirationService),
+vi.mock(import('../../../src/oidc/ExpirationService.js'), () => ({
+  ExpirationService: vi.fn(function () {
+    return mockExpirationService
+  }),
 }))

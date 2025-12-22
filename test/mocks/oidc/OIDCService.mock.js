@@ -1,15 +1,17 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockOIDCService = {
-  signInRedirect: jest.fn(),
-  signInRedirectCallback: jest.fn(),
-  signInSilent: jest.fn(),
-  signOutRedirect: jest.fn(),
-  isLoggedIn: jest.fn(),
-  isLoggingIn: jest.fn(),
-  cancelLogin: jest.fn(),
+  signInRedirect: vi.fn(),
+  signInRedirectCallback: vi.fn(),
+  signInSilent: vi.fn(),
+  signOutRedirect: vi.fn(),
+  isLoggedIn: vi.fn(),
+  isLoggingIn: vi.fn(),
+  cancelLogin: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/oidc/OIDCService.js', () => ({
-  OIDCService: jest.fn().mockImplementation(() => mockOIDCService),
+vi.mock(import('../../../src/oidc/OIDCService.js'), () => ({
+  OIDCService: vi.fn(function () {
+    return mockOIDCService
+  }),
 }))

@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
-export const mockJson = jest.fn()
+export const mockJson = vi.fn()
 
-export const mockFetch = jest.fn().mockResolvedValue({
+export const mockFetch = vi.fn().mockResolvedValue({
   ok: true,
   json: mockJson,
 })

@@ -1,12 +1,12 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { mockOIDCService } from '../mocks/oidc/OIDCService.mock.js'
 import { mockConfigUtils } from '../mocks/utils/ConfigUtil.mock.js'
 
 const { BrowserService } = await import('../../src/auth/BrowserService.js')
 
-let isLoggedIn = jest.fn()
-let login = jest.fn()
+let isLoggedIn = vi.fn()
+let login = vi.fn()
 
 let unit
 
@@ -16,14 +16,14 @@ beforeAll(() => {
       href: 'https://site.com/',
     },
     history: {
-      replaceState: jest.fn(),
+      replaceState: vi.fn(),
     },
   }
 })
 
 beforeEach(() => {
   unit = new BrowserService(mockConfigUtils.defaultErrorHandler, true, mockOIDCService, isLoggedIn, login)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {

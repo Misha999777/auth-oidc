@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, afterAll, beforeEach, beforeAll } from '@jest/globals'
+import { vi, describe, it, expect, afterAll, beforeEach, beforeAll } from 'vitest'
 import { mockFetch, mockJson } from '../mocks/Fetch.mock.js'
 import { ConfigurationService } from '../../src/oidc/ConfigurationService.js'
 
@@ -19,7 +19,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   unit = new ConfigurationService(authorityUrl)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 afterAll(() => {

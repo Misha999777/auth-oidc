@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 
 export const mockConfigUtils = {
-  populateDefaults: jest.fn(),
-  defaultErrorHandler: jest.fn(),
+  populateDefaults: vi.fn(),
+  defaultErrorHandler: vi.fn(),
 }
 
-jest.unstable_mockModule('../../src/utils/ConfigUtil.js', () => mockConfigUtils)
+vi.mock(import('../../../src/utils/ConfigUtil.js'), () => mockConfigUtils)
