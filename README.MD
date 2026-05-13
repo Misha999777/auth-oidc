@@ -2,14 +2,13 @@
 [![License](https://img.shields.io/:license-MIT-green.svg)](https://github.com/Misha999777/auth-oidc/blob/master/LICENSE)
 
 ## Main features:
-1. TypeScript support
-2. ESModule support
-3. Working with React, Angular and other popular front-end libraries
-4. Logging user in using redirect to the auth service
-5. Getting user info claims
-6. Supplying access token for requests to the back-end
-7. Automatic refreshing of the access token with refresh token when it expires
-8. Logging user out from the application and from the auth service
+1. Logging user in using redirect to the auth service
+2. Getting user info claims
+3. Supplying access token for requests to the back-end
+4. Automatic refreshing of the access token with refresh token when it expires
+5. Logging user out from the application and from the auth service
+6. Working with React, Angular and other popular front-end libraries
+7. Supports TypeScript and ESModules
 
 ## How to use
 ### 1. Install library using npm
