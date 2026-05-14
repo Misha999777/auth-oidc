@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer'
+
 import { vi, describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest'
 
 import { mockJson, mockFetch } from '../mocks/Fetch.mock.js'
@@ -18,15 +20,19 @@ const code = 'code'
 const accessToken = 'access-token'
 const refreshToken = 'refresh-token'
 const idToken = 'id-token'
-const challenge = 'f2LwESBr8ezpvlZBEeqfvb4yeNpHC5Nc90_scF04hgM'
-const verifier = 'AQIDBA'
+const randomValue = new Uint8Array([1, 2, 3, 4])
+const verifier = Buffer.from(randomValue).toString('base64url')
+const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))
+const challenge = Buffer.from(digest).toString('base64url')
 
 let unit
 
 beforeAll(() => {
   vi.useFakeTimers()
   global.setInterval = vi.fn()
-  global.window = { location: { replace: vi.fn(), reload: vi.fn() }, crypto: { getRandomValues: vi.fn() } }
+  global.window = {
+    location: { replace: vi.fn(), reload: vi.fn() },
+    crypto: { getRandomValues: vi.fn(), subtle: { digest: vi.fn() } } }
   global.fetch = mockFetch
 })
 
@@ -50,7 +56,41 @@ describe('ConfigurationService signInRedirect', function () {
       + '&response_type=code&scope=openid' + '&code_challenge=' + challenge + '&code_challenge_method=S256'
 
     mockConfigurationService.getAuthEndpoint.mockReturnValue(authUrl)
-    window.crypto.getRandomValues.mockImplementation(() => new Uint8Array([1, 2, 3, 4]))
+    window.crypto.getRandomValues.mockImplementation(() => randomValue)
+    window.crypto.subtle.digest.mockResolvedValue(digest)
+
+    // WHEN
+    await unit.signInRedirect(redirectUri)
+
+    // THEN
+    expect(mockConfigurationService.getAuthEndpoint).toHaveBeenCalledTimes(1)
+
+    expect(window.crypto.getRandomValues).toHaveBeenCalledTimes(1)
+    expect(window.crypto.getRandomValues).toHaveBeenCalledWith(new Uint8Array(64))
+
+    expect(window.crypto.subtle.digest).toHaveBeenCalledTimes(1)
+    expect(window.crypto.subtle.digest).toHaveBeenCalledWith('SHA-256', new TextEncoder().encode(verifier))
+
+    expect(mockStorageService.setRedirectUri).toHaveBeenCalledTimes(1)
+    expect(mockStorageService.setRedirectUri).toHaveBeenCalledWith(redirectUri)
+
+    expect(mockStorageService.setVerifier).toHaveBeenCalledTimes(1)
+    expect(mockStorageService.setVerifier).toHaveBeenCalledWith(verifier)
+
+    expect(window.location.replace).toHaveBeenCalledTimes(1)
+    expect(window.location.replace).toHaveBeenCalledWith(expectedAuthUri)
+  })
+
+  it('fallback to plain without crypto.subtle', async function () {
+    // GIVEN
+    const expectedAuthUri = authUrl + '?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri)
+      + '&response_type=code&scope=openid' + '&code_challenge=' + verifier + '&code_challenge_method=plain'
+
+    mockConfigurationService.getAuthEndpoint.mockReturnValue(authUrl)
+    window.crypto.getRandomValues.mockImplementation(() => randomValue)
+
+    const originalSubtle = window.crypto.subtle
+    delete window.crypto.subtle
 
     // WHEN
     await unit.signInRedirect(redirectUri)
@@ -69,6 +109,9 @@ describe('ConfigurationService signInRedirect', function () {
 
     expect(window.location.replace).toHaveBeenCalledTimes(1)
     expect(window.location.replace).toHaveBeenCalledWith(expectedAuthUri)
+
+    // RESTORE
+    window.crypto.subtle = originalSubtle
   })
 })
 

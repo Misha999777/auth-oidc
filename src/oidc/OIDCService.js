@@ -16,6 +16,7 @@ export class OIDCService {
   CODE = 'code'
   OPEN_ID = 'openid'
   S256 = 'S256'
+  PLAIN = 'plain'
 
   WATCHER_ACTIONS = {
     checkExpiration: () => {
@@ -56,6 +57,7 @@ export class OIDCService {
 
     const codeVerifier = this._generateCodeVerifier()
     const codeChallenge = await this._generateCodeChallenge(codeVerifier)
+    const challengeMethod = window.crypto.subtle ? this.S256 : this.PLAIN
 
     const parameters = [
       this._constructParam(this.CLIENT_ID_PARAMETER, this.clientId),
@@ -63,7 +65,7 @@ export class OIDCService {
       this._constructParam(this.RESPONSE_TYPE_PARAMETER, this.CODE),
       this._constructParam(this.SCOPE_URI_PARAMETER, this.OPEN_ID),
       this._constructParam(this.CODE_CHALLENGE, codeChallenge),
-      this._constructParam(this.CHALLENGE_METHOD, this.S256),
+      this._constructParam(this.CHALLENGE_METHOD, challengeMethod),
     ].join('&')
 
     const href = [endpoint, '?', parameters].join('')
@@ -196,10 +198,15 @@ export class OIDCService {
   }
 
   async _generateCodeChallenge(codeVerifier) {
-    const encoder = new TextEncoder()
-    const data = encoder.encode(codeVerifier)
-    const digest = await crypto.subtle.digest('SHA-256', data)
-    return this._base64UrlEncode(digest)
+    if (window.crypto.subtle) {
+      const encoder = new TextEncoder()
+      const data = encoder.encode(codeVerifier)
+      const digest = await window.crypto.subtle.digest('SHA-256', data)
+
+      return this._base64UrlEncode(digest)
+    }
+
+    return codeVerifier
   }
 
   _base64UrlEncode(arrayBuffer) {
