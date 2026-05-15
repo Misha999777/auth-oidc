@@ -1,0 +1,62 @@
+name: Publish Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Select version bump type'
+        required: true
+        type: choice
+        default: 'patch'
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Configure Git User
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          NEW_VERSION=$(npm version ${{ inputs.version_type }} -m "chore(release): %s")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+      - name: Push commit and tag
+        run: git push --follow-tags
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.NEW_VERSION }}
+          name: Release ${{ env.NEW_VERSION }}
+          generate_release_notes: true
+          body: |
+            📦 **Available on npm!**
+            👉 https://www.npmjs.com/package/auth-oidc
+
+            ---
+
+      - run: npm publish
