@@ -29,7 +29,7 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
-      - name: Configure Git User
+      - name: Configure git user
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -40,15 +40,12 @@ jobs:
       - run: npm run build
 
       - name: Bump version
-        id: bump_version
         run: |
           NEW_VERSION=$(npm version ${{ inputs.version_type }} -m "chore(release): %s")
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           
-      - name: Push commit and tag
-        run: git push --follow-tags
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
+      - run: git push --follow-tags
+      - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.NEW_VERSION }}
           name: Release ${{ env.NEW_VERSION }}
