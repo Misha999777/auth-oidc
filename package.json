@@ -1,6 +1,6 @@
 {
   "name": "auth-oidc",
-  "version": "1.2.2",
+  "version": "1.2.5",
   "type": "module",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,17 +24,11 @@
     "browser"
   ],
   "scripts": {
-    "lint": "eslint",
     "test": "vitest run",
     "build": "vite build"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "@vitest/eslint-plugin": "^1.6.17",
-    "eslint": "^10.3.0",
-    "globals": "^17.6.0",
-    "vite": "^8.0.12",
-    "vitest": "^4.1.6"
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
   }
 }

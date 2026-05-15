@@ -1,0 +1,46 @@
+name: Publish Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Select version bump type'
+        required: true
+        type: choice
+        default: 'patch'
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Configure git user
+        run: |
+          git config --global user.name '${{ github.actor }}'
+          git config --global user.email '${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com'
+
+      - run: npm ci
+      - run: npm run test
+      - run: npm run build
+
+      - name: Bump version
+        run: |
+          npm version ${{ inputs.version_type }} -m "chore(release): %s"
+
+      - run: npm publish
+      - run: git push --follow-tags
