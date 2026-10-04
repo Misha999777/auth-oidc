@@ -43,5 +43,8 @@ jobs:
         run: |
           npm version ${{ inputs.version_type }} -m "chore(release): %s"
 
+      - name: Swap instructions
+        run: cp docs/instructions.md README.md
+
       - run: npm publish
       - run: git push --follow-tags
