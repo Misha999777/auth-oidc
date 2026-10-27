@@ -1,7 +1,7 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import stylistic from '@stylistic/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default [
   {
@@ -26,8 +26,8 @@ export default [
       ...stylistic.configs.recommended.rules,
 
       '@stylistic/padded-blocks': 'off',
+      '@stylistic/multiline-ternary': 'off',
       '@stylistic/brace-style': ['error', '1tbs'],
-      '@stylistic/multiline-ternary': ['error', 'always-multiline'],
     },
   },
 
